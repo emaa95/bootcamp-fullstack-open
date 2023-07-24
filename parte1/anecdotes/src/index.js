@@ -16,6 +16,27 @@ const Anecdote = (props) =>{
   )
 }
 
+const Winner = (props) => {
+  const maxVotes = Math.max(...props.votes)
+  const winnerIndex = props.votes.indexOf(maxVotes)
+  const winner = props.anecdotes[winnerIndex]
+
+  if (maxVotes === 0){
+    return(
+        <p>Not vote yet</p>
+    )
+  }
+
+  return(
+    <div>
+      <p>{winner}</p>
+
+      <p>has {maxVotes} votes</p>
+    </div>
+  )
+} 
+
+
 const App = (props) => {
   
   const [selected, setSelected] = useState(0)
@@ -34,9 +55,12 @@ const App = (props) => {
 
   return (
     <div>
+      <h1> Anecdote of the day</h1>
       <Anecdote text={anecdotes[selected]} votes={votes[selected]}></Anecdote>
       <Button handleClick={handleRandomClick} text="Next anecdote"></Button>
       <Button handleClick={handleVoteClick} text="vote"></Button>
+      <h1>Anecdote with most votes</h1>
+      <Winner anecdotes={anecdotes} votes={votes}></Winner>
     </div>
     
   )
