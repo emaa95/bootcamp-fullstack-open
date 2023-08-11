@@ -55,6 +55,18 @@ function App() {
   }
   }
 
+  const deletePerson = id => {
+    const filteredPerson = persons.filter(person => person.id === id)
+    const personName = filteredPerson[0].name
+    const personId = filteredPerson[0].id
+
+    if (window.confirm(`Delete ${personName} ?`)){
+      personService.eliminate(personId)
+      console.log(`${personName} successfully deleted`)
+    }
+
+  }
+
   const handleNameChange = (event) =>{
     setNewName(event.target.value)
   }
@@ -87,7 +99,7 @@ function App() {
       
     </PersonForm>
     <h2>Numbers</h2>
-    <Content persons = {filteredPersons}></Content>
+    <Content persons = {filteredPersons} deletePerson={deletePerson}></Content>
   </div>
   );
 }
