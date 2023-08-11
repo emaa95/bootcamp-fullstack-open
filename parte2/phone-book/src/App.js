@@ -2,7 +2,9 @@ import React, {useState, useEffect} from 'react'
 import Content from './Components/Content'
 import Filter from './Components/Filter'
 import PersonForm from './Components/PersonForm'
-import axios from 'axios'
+
+
+import personService from './services/persons'
 
 function App() {
   
@@ -20,13 +22,13 @@ function App() {
 
   useEffect (() => {
     console.log('effect')
-    axios.get('http://localhost:3001/persons').then(response => {
-      console.log('promise fulfilled')
-      setPersons(response.data)
-      console.log(response.data)
+    personService
+    .getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
     })
 
-  }) 
+  }, []) 
 
   
 
@@ -44,11 +46,12 @@ function App() {
       number: newNumber
     }
 
-    axios.post('http://localhost:3001/persons', personObject)
-    .then(response =>{
+    personService
+    .create(personObject)
+    .then(returnedPerson => {
       setPersons(persons.concat(personObject))
       setNewName('')
-    })
+    })  
   }
   }
 
