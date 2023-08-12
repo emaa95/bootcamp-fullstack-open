@@ -30,29 +30,44 @@ function App() {
 
   }, []) 
 
-  
 
   const addPerson = (event) =>{
     event.preventDefault()
+  
+    const person = persons.filter(person => person.name === newName)
     
-    const nameExists = persons.some(person => person.name === newName);
+    const personToAdd = person[0]
+    const updatePerson = {...personToAdd, number: newNumber}
+    
+    if (person.length !== 0 ) {
+      if (window.confirm(`${(personToAdd.name)} 
+      is already added to the phonebook, replace the old number with a new one?`)){
+        personService.update(updatePerson.id, updatePerson).then(
+          returnedPerson =>  {
+          console.log(`${returnedPerson.name} successfully updated`)
+          setPersons(persons.map(personItem => personItem.id !== personToAdd.id ? personItem : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+        }
+        )
+      }
+    } 
 
-  if (nameExists) {
-    alert(`${newName} already exists in the phonebook.`)
-  }
-  else{
-    const personObject = {
+  else {
+    const personToAdd = {
       name: newName,
       number: newNumber
     }
 
     personService
-    .create(personObject)
+    .create(personToAdd)
     .then(returnedPerson => {
-      setPersons(persons.concat(personObject))
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
-    })  
-  }
+      setNewNumber('')
+    }  
+    )
+   }
   }
 
   const deletePerson = id => {
@@ -83,7 +98,7 @@ function App() {
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase())
   );
-
+  
   return (
     <div>
     <h2>Phonebook</h2>
