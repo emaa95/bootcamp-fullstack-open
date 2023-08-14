@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Content from './Components/Content'
 import Filter from './Components/Filter'
 import PersonForm from './Components/PersonForm'
-
+import Notification from './Components/Notification'
 
 import personService from './services/persons'
 
@@ -18,6 +18,7 @@ function App() {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter , setFilter] = useState('')
+  const [ message, setMessage ] = useState(null)
   
 
   useEffect (() => {
@@ -37,19 +38,38 @@ function App() {
     const person = persons.filter(person => person.name === newName)
     
     const personToAdd = person[0]
-    const updatePerson = {...personToAdd, number: newNumber}
+    const updatedPerson = {...personToAdd, number: newNumber}
     
     if (person.length !== 0 ) {
       if (window.confirm(`${(personToAdd.name)} 
       is already added to the phonebook, replace the old number with a new one?`)){
-        personService.update(updatePerson.id, updatePerson).then(
+        personService.update(updatedPerson.id, updatedPerson).then(
           returnedPerson =>  {
           console.log(`${returnedPerson.name} successfully updated`)
           setPersons(persons.map(personItem => personItem.id !== personToAdd.id ? personItem : returnedPerson))
             setNewName('')
             setNewNumber('')
+            setMessage(
+              `${updatedPerson.name} was successfully updated`
+            )
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
         }
         )
+        .catch(error => {
+          console.log(error)
+          setPersons(persons.filter(person => person.id !== updatedPerson.id))
+          setNewName('')
+          setNewNumber('')
+          setMessage(
+            `[ERROR] ${updatedPerson.name} was already deleted from server`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+
+        })
       }
     } 
 
@@ -65,8 +85,24 @@ function App() {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setMessage(
+        `${newName} was successfully added`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }  
     )
+    .catch(error => {
+      setMessage(
+        `[ERROR] ${error.response.data.error}`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      console.log(error.response.data)
+
+    })
    }
   }
 
@@ -78,6 +114,11 @@ function App() {
     if (window.confirm(`Delete ${personName} ?`)){
       personService.eliminate(personId)
       console.log(`${personName} successfully deleted`)
+      setMessage(`${personName} was successfully deleted`)
+      setPersons(persons.filter(person => person.id !== personId))
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
 
   }
@@ -102,6 +143,7 @@ function App() {
   return (
     <div>
     <h2>Phonebook</h2>
+    <Notification message={message} />
     <div>
       <Filter value={filter} onChange={handleFilterChange}></Filter>
     </div>
