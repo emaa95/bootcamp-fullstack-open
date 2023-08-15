@@ -27,6 +27,18 @@ app.get('/info', (req,res) => {
     res.send(infoResponse);
 });
 
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const person = agendaTelefonica.find(person => person.id === id)
+
+    if (person){
+        res.json(person)
+    } else
+    {
+        res.status(404).end()
+    }
+});
+
 app.listen(port, () => {
   console.log(`Servidor iniciado en http://localhost:${port}`);
 });
