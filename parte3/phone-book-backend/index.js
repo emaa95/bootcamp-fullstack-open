@@ -52,8 +52,44 @@ app.delete('/api/persons/:id', (req, res) => {
     agendaTelefonica = agendaTelefonica.filter(entry => entry.id !== idToDelete);
   
     res.status(204).end();
-  });
+});
+
+function generateRandomId(){
+    const minId = 1
+    const maxId = 100000
+
+    return Math.floor(Math.random() * (maxId - minId + 1)) + minId;
+}
+
+app.use(express.json());
+
+// Ruta para agregar una nueva entrada a la agenda telefónica
+app.post('/api/persons', (req, res) => {
+  const { nombre, telefono } = req.body;
+
+  if (!nombre || !telefono) {
+    return res.status(400).json({ error: 'El nombre y el teléfono son obligatorios' });
+  }
   
+  const existingEntry = agendaTelefonica.find(entry => entry.nombre === nombre);
+  
+  if (existingEntry) {
+    return res.status(409).json({ error: 'El nombre ya existe en la agenda' });
+  }
+
+  const newEntry = {
+    id: generateRandomId(),
+    nombre,
+    telefono
+  };
+
+  agendaTelefonica.push(newEntry);
+
+  res.status(201).json(newEntry);
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Servidor iniciado en http://localhost:${port}`);
