@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3001;
+const morgan = require('morgan')
 
 // Datos hardcodeados de la agenda telefónica
 let agendaTelefonica = [
@@ -8,6 +9,18 @@ let agendaTelefonica = [
   { id: 2, nombre: 'María', telefono: '987654321' },
   { id: 3, nombre: 'Pedro', telefono: '555555555' }
 ];
+
+app.use(morgan((tokens, req, res) => {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    JSON.stringify(req.body), // Mostrar el cuerpo de la solicitud POST
+    tokens['response-time'](req, res), 'ms'
+  ].join(' ');
+}));
+
+app.use(express.json());
 
 // Ruta para obtener la lista de personas
 app.get('/api/persons', (req, res) => {
