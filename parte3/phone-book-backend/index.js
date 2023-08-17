@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3001;
 const morgan = require('morgan')
+const cors = require('cors')
 
 // Datos hardcodeados de la agenda telefónica
 let agendaTelefonica = [
-  { id: 1, nombre: 'Juan', telefono: '123456789' },
-  { id: 2, nombre: 'María', telefono: '987654321' },
-  { id: 3, nombre: 'Pedro', telefono: '555555555' }
+  { id: 1, name: 'Juan', number: '123456789' },
+  { id: 2, name: 'María', number: '987654321' },
+  { id: 3, name: 'Pedro', number: '555555555' }
 ];
 
 app.use(morgan((tokens, req, res) => {
@@ -21,7 +22,7 @@ app.use(morgan((tokens, req, res) => {
 }));
 
 app.use(express.json());
-
+app.use(cors())
 // Ruta para obtener la lista de personas
 app.get('/api/persons', (req, res) => {
   res.json(agendaTelefonica);
@@ -78,13 +79,13 @@ app.use(express.json());
 
 // Ruta para agregar una nueva entrada a la agenda telefónica
 app.post('/api/persons', (req, res) => {
-  const { nombre, telefono } = req.body;
+  const { name, number } = req.body;
 
-  if (!nombre || !telefono) {
+  if (!name || !number) {
     return res.status(400).json({ error: 'El nombre y el teléfono son obligatorios' });
   }
   
-  const existingEntry = agendaTelefonica.find(entry => entry.nombre === nombre);
+  const existingEntry = agendaTelefonica.find(entry => entry.name === name);
   
   if (existingEntry) {
     return res.status(409).json({ error: 'El nombre ya existe en la agenda' });
@@ -92,8 +93,8 @@ app.post('/api/persons', (req, res) => {
 
   const newEntry = {
     id: generateRandomId(),
-    nombre,
-    telefono
+    name,
+    number
   };
 
   agendaTelefonica.push(newEntry);
