@@ -23,6 +23,7 @@ app.use(morgan((tokens, req, res) => {
 
 app.use(express.json());
 app.use(cors())
+app.use(express.static('build'))
 // Ruta para obtener la lista de personas
 app.get('/api/persons', (req, res) => {
   res.json(agendaTelefonica);
