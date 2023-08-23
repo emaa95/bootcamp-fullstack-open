@@ -1,15 +1,10 @@
 const express = require('express');
 const app = express();
-const port = 3001;
+require('dotenv').config();
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person');
 
-// Datos hardcodeados de la agenda telefónica
-let agendaTelefonica = [
-  { id: 1, name: 'Juan', number: '123456789' },
-  { id: 2, name: 'María', number: '987654321' },
-  { id: 3, name: 'Pedro', number: '555555555' }
-];
 
 app.use(morgan((tokens, req, res) => {
   return [
@@ -24,24 +19,31 @@ app.use(morgan((tokens, req, res) => {
 app.use(express.json());
 app.use(cors())
 app.use(express.static('build'))
+
 // Ruta para obtener la lista de personas
 app.get('/api/persons', (req, res) => {
-  res.json(agendaTelefonica);
+  Person.find({}).then(persons => {
+    res.json(persons.map(person => person.toJSON()))
+  })
+  
 });
 
+//Ruta que muestra info de la fecha y la cantidad de personas de la agenda
 app.get('/info', (req,res) => {
     const currentTime = new Date();
-    const entryCount = agendaTelefonica.length
+    Person.find({}).then(persons => {
+      res.send(
+        `
+        <h2>Información de la solicitud</h2>
+        <p>Hora de la solicitud: ${currentTime}</p>
+        <p>Cantidad de entradas en la agenda: ${persons.length}</p>
+        `
+      )
+    })
 
-    const infoResponse = `
-    <h2>Información de la solicitud</h2>
-    <p>Hora de la solicitud: ${currentTime}</p>
-    <p>Cantidad de entradas en la agenda: ${entryCount}</p>
-    `;
-
-    res.send(infoResponse);
 });
 
+//Ruta que muestra la información de una persona específica 
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     const person = agendaTelefonica.find(person => person.id === id)
@@ -105,7 +107,7 @@ app.post('/api/persons', (req, res) => {
 
 
 
-
-app.listen(port, () => {
-  console.log(`Servidor iniciado en http://localhost:${port}`);
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Servidor iniciado en http://localhost:${PORT}`);
 });
