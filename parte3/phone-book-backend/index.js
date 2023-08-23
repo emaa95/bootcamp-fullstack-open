@@ -82,27 +82,22 @@ app.use(express.json());
 
 // Ruta para agregar una nueva entrada a la agenda telefónica
 app.post('/api/persons', (req, res) => {
-  const { name, number } = req.body;
-
-  if (!name || !number) {
-    return res.status(400).json({ error: 'El nombre y el teléfono son obligatorios' });
-  }
   
-  const existingEntry = agendaTelefonica.find(entry => entry.name === name);
-  
-  if (existingEntry) {
-    return res.status(409).json({ error: 'El nombre ya existe en la agenda' });
-  }
+  const body = req.body
+  const personName = body.name
+  const personNumber = body.number
 
-  const newEntry = {
-    id: generateRandomId(),
-    name,
-    number
-  };
+  const person = new Person({
+    name: personName,
+    number: personNumber
+  })
 
-  agendaTelefonica.push(newEntry);
-
-  res.status(201).json(newEntry);
+  person.save()
+  .then(savedPerson =>  savedPerson.toJSON())
+  .then(savedAndFormattedPerson => {
+    console.log(`added ${personName} number ${personNumber} to phonebook`)
+    res.json(savedAndFormattedPerson)
+  })
 });
 
 

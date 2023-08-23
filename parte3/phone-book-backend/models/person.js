@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose')
-
+const uniqueValidator = require('mongoose-unique-validator');
 
 mongoose.set('strictQuery', false)
 
@@ -24,7 +24,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
       required: true,
       unique: true
     } ,
-    phone: {
+    number: {
       type: String,
       minlength: 8,
       required: true
@@ -38,6 +38,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
         delete returnedObject.__v
       }
   })
-  
+
+  personSchema.plugin(uniqueValidator);
   module.exports = mongoose.model('Person', personSchema)
 
