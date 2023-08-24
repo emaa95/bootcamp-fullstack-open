@@ -58,25 +58,11 @@ app.get('/api/persons/:id', (req, res) => {
 
 // Ruta para eliminar una entrada de la agenda telefónica por su ID
 app.delete('/api/persons/:id', (req, res) => {
-    const idToDelete = parseInt(req.params.id);
-  
-    const entryToDelete = agendaTelefonica.find(entry => entry.id === idToDelete);
-  
-    if (!entryToDelete) {
-      return res.status(404).json({ error: 'Entrada no encontrada' });
-    }
-  
-    agendaTelefonica = agendaTelefonica.filter(entry => entry.id !== idToDelete);
-  
-    res.status(204).end();
+    Person.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
 });
-
-function generateRandomId(){
-    const minId = 1
-    const maxId = 100000
-
-    return Math.floor(Math.random() * (maxId - minId + 1)) + minId;
-}
 
 app.use(express.json());
 
