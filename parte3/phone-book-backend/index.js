@@ -68,16 +68,17 @@ app.get('/info', (req,res) => {
 });
 
 //Ruta que muestra la información de una persona específica 
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = agendaTelefonica.find(person => person.id === id)
-
-    if (person){
+app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id)
+    .then( person => {
+      if (person){
         res.json(person)
     } else
     {
         res.status(404).end()
     }
+    })
+    .catch(error => next(error))
 });
 
 // Ruta para eliminar una entrada de la agenda telefónica por su ID
