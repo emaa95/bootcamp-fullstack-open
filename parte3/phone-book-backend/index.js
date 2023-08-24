@@ -16,8 +16,32 @@ app.use(morgan((tokens, req, res) => {
   ].join(' ');
 }));
 
-app.use(express.json());
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+const errorHandler = (error, req, res, next) =>{
+  console.error(error.message)
+
+  if (error.name === 'CastError'){
+    return res.status(400).send({ error: 'malformatted id'})
+  } else if (error.name === 'ValidationError'){
+    return res.status(400).json({error: error.message})
+  }
+  next(error)
+}
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: ' unknown endpoint'})
+}
+
 app.use(cors())
+app.use(express.json());
+app.use(requestLogger)
 app.use(express.static('build'))
 
 // Ruta para obtener la lista de personas
@@ -67,12 +91,18 @@ app.delete('/api/persons/:id', (req, res) => {
 app.use(express.json());
 
 // Ruta para agregar una nueva entrada a la agenda telefónica
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   
   const body = req.body
   const personName = body.name
   const personNumber = body.number
-
+  
+  if (Object.keys(body).length === 0) {
+    return res.status(400).json({
+      error: 'content missing'
+    })
+  }
+  
   const person = new Person({
     name: personName,
     number: personNumber
@@ -84,9 +114,11 @@ app.post('/api/persons', (req, res) => {
     console.log(`added ${personName} number ${personNumber} to phonebook`)
     res.json(savedAndFormattedPerson)
   })
+  .catch(error => next(error))
 });
 
-
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
