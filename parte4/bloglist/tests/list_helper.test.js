@@ -96,3 +96,27 @@ describe('favorite blog', () => {
 
   })
 })
+
+describe('most blogs', () => {
+  test('if the list is empty the value is {}', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toEqual({})
+  })
+
+  test('if the list has only one blog it is equal to the author of that blog', () => {
+    const blog = blogs[0]
+    const mostBlog = listHelper.mostBlogs([blog])
+    expect(mostBlog).toEqual({
+      author: blog.author, 
+      blogs: 1 
+    })
+  })
+
+  test('if the list has more than one blog it works correctly', () =>{
+    const mostBlog = listHelper.mostBlogs(blogs)
+    expect(mostBlog).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3
+    })
+  })
+} )
