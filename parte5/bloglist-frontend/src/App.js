@@ -6,18 +6,22 @@ import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [allBlogs, setAllBlogs] = useState('')
   const [error, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)  
+      blogService.getAll().then(blogs =>
+        setBlogs( blogs )
+      )  
+    }
+  },[])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -27,6 +31,10 @@ const App = () => {
         {
           username, password
         }
+      )
+      blogService.setToken(user.token)
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
       )
       setUser(user)
       setUsername('')
@@ -39,6 +47,24 @@ const App = () => {
     }
   }
   
+  const handleLogout = async (event) => {
+      try{
+
+        event.preventDefault()
+        
+        window.localStorage.removeItem('loggedBlogappUser')
+        
+        blogService.setToken(null);
+
+        setUser(null);
+
+      } catch (exception) {
+        setErrorMessage('Logout error')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+  }
   return (
     
     <div>
@@ -55,7 +81,7 @@ const App = () => {
         :
         <div>
         <p> {user.username} logged in</p>
-        
+        <button id="logout-button" onClick={handleLogout} type="submit">Logout</button>
         <h2>blogs</h2>
         {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
