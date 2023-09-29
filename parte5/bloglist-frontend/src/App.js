@@ -3,10 +3,13 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm' 
+import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [error, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -41,6 +44,7 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setErrorMessage('Wrong credentials')
+      setSuccessMessage(null)
       setTimeout(()=> {
         setErrorMessage(null)
       }, 5000)
@@ -65,10 +69,40 @@ const App = () => {
         }, 5000)
       }
   }
+
+  const addBlog = async (BlogToAdd) => {
+    
+    try{
+      const createBlog = await blogService
+      .create(BlogToAdd)
+
+      setSuccessMessage(`a new blog ${BlogToAdd.title} added`)
+
+      setBlogs(blogs.concat(createBlog))
+      
+      setErrorMessage(null)
+      
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+
+    } catch(exception) {
+      setErrorMessage(
+        `Cannot add blog ${BlogToAdd.title}`
+      )
+      setSuccessMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } 
+    
+  }
+
   return (
     
     <div>
       <h1>BlogApp</h1>
+      <Notification errorMessage={errorMessage} successMessage={successMessage}></Notification>
       { user === null ? 
         <LoginForm
           handleLogin = {handleLogin}
@@ -82,6 +116,7 @@ const App = () => {
         <div>
         <p> {user.username} logged in</p>
         <button id="logout-button" onClick={handleLogout} type="submit">Logout</button>
+        <BlogForm createBlog={addBlog}></BlogForm>
         <h2>blogs</h2>
         {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
