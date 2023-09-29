@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm' 
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -53,7 +55,7 @@ const App = () => {
   
   const handleLogout = async (event) => {
       try{
-
+        
         event.preventDefault()
         
         window.localStorage.removeItem('loggedBlogappUser')
@@ -70,9 +72,11 @@ const App = () => {
       }
   }
 
+  //BlogToAdd es una nota nueva y es la prop que enviamos al formulario 
   const addBlog = async (BlogToAdd) => {
     
     try{
+      blogFormRef.current.toggleVisibility()    
       const createBlog = await blogService
       .create(BlogToAdd)
 
@@ -116,7 +120,9 @@ const App = () => {
         <div>
         <p> {user.username} logged in</p>
         <button id="logout-button" onClick={handleLogout} type="submit">Logout</button>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog}></BlogForm>
+        </Togglable>
         <h2>blogs</h2>
         {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
