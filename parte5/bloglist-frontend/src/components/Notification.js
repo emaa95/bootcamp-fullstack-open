@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const successStyle = {
     color: 'green',
@@ -41,6 +42,11 @@ function Notification({errorMessage, successMessage}) {
         )
     }
 
+}
+
+Notification.propTypes ={
+    errorMessage: PropTypes.string,
+    successMessage: PropTypes.string
 }
 
 export default Notification
