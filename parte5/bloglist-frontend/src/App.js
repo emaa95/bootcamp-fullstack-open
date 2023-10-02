@@ -102,6 +102,29 @@ const App = () => {
     
   }
 
+  const addBlogLike = async (id) => {
+    const blogToUpdate = blogs.find((blog) => blog.id === id);
+  
+    if (!blogToUpdate) {
+      console.log(`No se encontró ningún blog con el ID: ${id}`);
+      return;
+    }
+  
+    try {
+      const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 };
+  
+      // Realiza la actualización local antes de la solicitud PUT
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((blog) => (blog.id === id ? updatedBlog : blog))
+      );
+  
+      await blogService.update(id, updatedBlog);
+    } catch (error) {
+      console.log('No se pudo dar like al blog:', error);
+    }
+  };
+
+ 
   return (
     
     <div>
@@ -125,7 +148,7 @@ const App = () => {
         </Togglable>
         <h2>blogs</h2>
         {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addBlogLike={addBlogLike} />
         )}
         </div>
       }

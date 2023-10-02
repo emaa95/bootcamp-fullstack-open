@@ -1,7 +1,7 @@
 import React from 'react'
 import Togglable from './Togglable'
 
-function Blog({ blog }) {
+function Blog({ blog, addBlogLike }) {
 
   const blogStyle = {
     paddingTop: 10,
@@ -11,14 +11,15 @@ function Blog({ blog }) {
     marginBottom: 5
   }
 
-  
 
   return (
     
     <div style={blogStyle}>
       {blog.title} - {blog.author} <Togglable buttonLabel="view" buttonLabel2="hide">
-      <p>{blog.url}</p>
-      <p>{blog.likes}</p>
+      <p>Url: {blog.url}</p>
+      <div>
+      likes: {blog.likes}<button id="likes-button" onClick={() => addBlogLike(blog.id)}> like </button>
+      </div>
       </Togglable>
     </div>
     
