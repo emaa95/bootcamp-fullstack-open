@@ -124,6 +124,37 @@ const App = () => {
     }
   };
 
+  const removeBlog = async(id) => {
+    const blogToRemove = blogs.find((blog) => blog.id === id);
+    
+    if (!blogToRemove) {
+      console.log(`No se encontró ningún blog con el ID: ${id}`);
+      return;
+    }
+
+    try{
+      if ( window.confirm(`Delete ${blogToRemove.title}?`)){
+      await blogService.remove(blogToRemove.id)
+      setSuccessMessage(
+        `Blog ${blogToRemove.title} was successfully deleted`
+      )
+      setErrorMessage(null)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      setBlogs(blogs.filter((blog) => (blog.id !== id)))
+      }
+    } catch (exception) {
+      setErrorMessage(
+        `Cannot delete blog ${blogToRemove.title}`
+      )
+      setSuccessMessage(null)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
  
   return (
     
@@ -148,7 +179,7 @@ const App = () => {
         </Togglable>
         <h2>blogs</h2>
         {blogs.sort((a, b) => (b.likes - a.likes)).map(blog =>
-        <Blog key={blog.id} blog={blog} addBlogLike={addBlogLike} />
+        <Blog key={blog.id} blog={blog} addBlogLike={addBlogLike} removeBlog={removeBlog}/>
         )}
         </div>
       }
