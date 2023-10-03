@@ -11,9 +11,13 @@ describe('Blog component test', () => {
         likes: 5
     }    
 
+    
+  let addBlogHandlerMock = jest.fn()
+  let removeHandlerMock = jest.fn()
+
 test('renders title and author', () => {
     const view = render(
-        <Blog blog={blog}></Blog>
+        <Blog blog={blog} addBlogLike={addBlogHandlerMock} removeBlog={removeHandlerMock}></Blog>
     )
     expect(view.container).toHaveTextContent(
         'test1 - root'
@@ -22,7 +26,7 @@ test('renders title and author', () => {
 
 test ('click the view button displays url and number of likes', () => {
     const view = render(
-        <Blog blog= {blog}></Blog>
+        <Blog blog= {blog} addBlogLike={addBlogHandlerMock} removeBlog={removeHandlerMock}></Blog>
     )
 
     const button = screen.getByText('view')
@@ -38,10 +42,9 @@ test ('click the view button displays url and number of likes', () => {
 })
 
 test ('click like button twice calls event handler twice', () => {
-    const mockHandler = jest.fn()
 
     const view = render (
-        <Blog blog = {blog} addBlogLike = {mockHandler}></Blog>
+        <Blog blog = {blog} addBlogLike = {addBlogHandlerMock} removeBlog={removeHandlerMock}></Blog>
     )
 
     // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
@@ -50,6 +53,6 @@ test ('click like button twice calls event handler twice', () => {
     fireEvent.click(button)
     fireEvent.click(button)
 
-    expect(mockHandler.mock.calls).toHaveLength(2)
+    expect(addBlogHandlerMock.mock.calls).toHaveLength(2)
 } )
 });
