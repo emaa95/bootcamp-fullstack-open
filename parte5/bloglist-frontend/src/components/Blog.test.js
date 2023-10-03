@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import Blog from './Blog'
 
 describe('Blog component test', () => {
@@ -17,6 +17,23 @@ test('renders title and author', () => {
     )
     expect(view.container).toHaveTextContent(
         'test1 - root'
+    )
+})
+
+test ('click the view button displays url and number of likes', () => {
+    const view = render(
+        <Blog blog= {blog}></Blog>
+    )
+
+    const button = screen.getByText('view')
+    fireEvent.click(button)
+
+    expect(view.container).toHaveTextContent(
+        'www.test1.com'
+    )
+
+    expect(view.container).toHaveTextContent(
+        '5'
     )
 })
 });
