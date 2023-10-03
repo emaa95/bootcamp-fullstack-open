@@ -36,4 +36,20 @@ test ('click the view button displays url and number of likes', () => {
         '5'
     )
 })
+
+test ('click like button twice calls event handler twice', () => {
+    const mockHandler = jest.fn()
+
+    const view = render (
+        <Blog blog = {blog} addBlogLike = {mockHandler}></Blog>
+    )
+
+    // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
+    const button = view.container.querySelector('#likes-button')
+
+    fireEvent.click(button)
+    fireEvent.click(button)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+} )
 });
