@@ -7,6 +7,7 @@ function LoginForm(props) {
             <div>
                 username 
                     <input
+                        id="username"
                         type="text"
                         value={props.username}
                         name="Username"
@@ -16,6 +17,7 @@ function LoginForm(props) {
             <div>
                 password
                     <input 
+                        id="password"
                         type="password"
                         value={props.password}
                         name="Password"
@@ -29,7 +31,7 @@ function LoginForm(props) {
     )
 }
 
-LoginForm.prototypes = {
+LoginForm.propTypes = {
     handleLogin: PropTypes.func.isRequired,
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,

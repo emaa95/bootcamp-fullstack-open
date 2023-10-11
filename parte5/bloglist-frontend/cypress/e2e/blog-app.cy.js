@@ -1,13 +1,13 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    // eslint-disable-next-line no-undef
+   
     cy.request('POST', 'http://localhost:3003/api/testing/reset')  
     const user = { 
       name: 'root',      
       username: 'root',      
       password: '1234'    
     }    
-    // eslint-disable-next-line no-undef
+  
     cy.request('POST', 'http://localhost:3003/api/users/', user)
     cy.visit('http://localhost:3000')
   })
@@ -16,5 +16,16 @@ describe('Blog app', function() {
     cy.contains('username')
     cy.contains('password')
     cy.contains('Login')
+  })
+
+  describe('Login', function(){
+    it('succeeds with correct credentials', function(){
+      cy.get('#username').type('root')
+      cy.get('#password').type('1234')
+      
+      cy.get('#login-button').click()
+
+      cy.contains('root logged in')
+    })
   })
 })

@@ -47,7 +47,7 @@ test ('click like button twice calls event handler twice', () => {
         <Blog blog = {blog} addBlogLike = {addBlogHandlerMock} removeBlog={removeHandlerMock}></Blog>
     )
 
-    // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
+   
     const button = view.container.querySelector('#likes-button')
 
     fireEvent.click(button)
