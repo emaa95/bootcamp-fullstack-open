@@ -27,5 +27,15 @@ describe('Blog app', function() {
 
       cy.contains('root logged in')
     })
+
+    it('fail with wrong credentials', function(){
+      cy.get('#username').type('root')
+      cy.get('#password').type('root')
+      
+      cy.get('#login-button').click()
+
+      cy.get('#error').should('contain', 'Wrong credentials')
+      cy.get('#error').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
   })
 })
