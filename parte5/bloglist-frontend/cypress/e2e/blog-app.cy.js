@@ -1,15 +1,15 @@
 describe('Blog app', function() {
   beforeEach(function() {
    
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')  
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)  
     const user = { 
       name: 'root',      
       username: 'root',      
       password: '1234'    
     }    
   
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.visit('http://localhost:3000')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {
@@ -37,5 +37,27 @@ describe('Blog app', function() {
       cy.get('#error').should('contain', 'Wrong credentials')
       cy.get('#error').should('have.css', 'color', 'rgb(255, 0, 0)')
     })
+  })
+
+  describe('when logged in', function(){
+    beforeEach(function() {
+      cy.login({ username: 'root', password: '1234' })
+    })
+    
+    it('a new blog can be created', () => {
+      cy.contains('new blog').click();
+
+      cy.get('#title').type('test1');
+      cy.get('#author').type('yo');
+      cy.get('#url').type('www.test.com');
+      cy.get('#likes').type(5);
+
+      cy.get('#blog-button').click()
+
+      cy.contains('test1 - yo')
+
+    });
+    
+    
   })
 })

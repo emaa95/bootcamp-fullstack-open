@@ -1,7 +1,7 @@
 module.exports = {
     "env": {
         "browser": true,
-        "es2021": true,
+        "es6": true,
         "jest/globals": true,
         "cypress/globals": true
     },
@@ -23,6 +23,9 @@ module.exports = {
         }
     ],
     "parserOptions": {
+        "ecmaFeatures": {
+            "jsx":true
+        },
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
@@ -32,5 +35,11 @@ module.exports = {
         "jest"
     ],
     "rules": {
+
+    },
+    "settings": {
+        "react":{
+            "version":"detect"
+        }
     }
 }
