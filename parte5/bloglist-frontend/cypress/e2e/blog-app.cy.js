@@ -57,7 +57,27 @@ describe('Blog app', function() {
       cy.contains('test1 - yo')
 
     });
-    
-    
+
+    describe('and a blog exists', function (){
+      beforeEach(() => {
+        cy.createBlog({
+          title:'another test',
+          author: 'root',
+          url: 'www.test2.com',
+          likes: 4,
+        })
+      });
+      
+      it('user can like a blog', () => {
+        cy.contains('another test - root')
+        cy.contains('view').click()
+        cy.contains(4)
+        cy.get('#likes-button').click()
+        cy.contains(5)
+      });
+      
+    })
   })
+
+  
 })
