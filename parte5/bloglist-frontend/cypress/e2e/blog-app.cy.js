@@ -2,6 +2,7 @@ describe('Blog app', function() {
   beforeEach(function() {
    
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)  
+
     const user = { 
       name: 'root',      
       username: 'root',      
@@ -39,10 +40,19 @@ describe('Blog app', function() {
     })
   })
 
-  describe('when logged in', function(){
+  describe.only('when logged in', function(){
     beforeEach(function() {
       cy.login({ username: 'root', password: '1234' })
     })
+
+    beforeEach(() => {
+      cy.createBlog({
+        title:'another test',
+        author: 'root',
+        url: 'www.test2.com',
+        likes: 4,
+      })
+    });
     
     it('a new blog can be created', () => {
       cy.contains('new blog').click();
@@ -58,10 +68,20 @@ describe('Blog app', function() {
 
     });
 
+    it('user logged can remove a blog', () => {
+      cy.contains('another test - root')
+      cy.contains('view').click()
+      cy.get('#remove-button').click()
+      cy.get('#success').should('contain','Blog another test was successfully deleted')
+      cy.get('#success').should('have.css', 'color', 'rgb(0, 128, 0)')
+    });
+
+    
+
     describe('and a blog exists', function (){
       beforeEach(() => {
         cy.createBlog({
-          title:'another test',
+          title:'another test2',
           author: 'root',
           url: 'www.test2.com',
           likes: 4,
@@ -75,6 +95,9 @@ describe('Blog app', function() {
         cy.get('#likes-button').click()
         cy.contains(5)
       });
+      
+      
+      
       
     })
   })
