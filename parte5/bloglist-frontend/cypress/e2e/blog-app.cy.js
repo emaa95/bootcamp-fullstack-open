@@ -76,6 +76,22 @@ describe('Blog app', function() {
       cy.get('#success').should('have.css', 'color', 'rgb(0, 128, 0)')
     });
 
+    it('user who did not create the blog cannot remove it', () => {
+      // Crear otro usuario y hacer login con ese usuario
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, {
+        name: 'anotherUser',
+        username: 'anotherUser',
+        password: 'password123',
+      });
+      cy.login({ username: 'anotherUser', password: 'password123' });
+  
+      // Intentar eliminar el blog creado por 'root'
+      cy.contains('another test - root');
+      cy.contains('view').click();
+      cy.get('#remove-button').click();
+      cy.get('#error').should('contain','Cannot delete blog another test')
+      cy.get('#error').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
     
 
     describe('and a blog exists', function (){
@@ -95,11 +111,10 @@ describe('Blog app', function() {
         cy.get('#likes-button').click()
         cy.contains(5)
       });
+
       
+      });
       
-      
-      
-    })
   })
 
   
