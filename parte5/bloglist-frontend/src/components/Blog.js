@@ -23,13 +23,13 @@ function Blog({ blog, addBlogLike , removeBlog }) {
 
   return (
     
-    <div style={blogStyle}>
+    <div style={blogStyle} id='blog' className='blog'>
       <div>
-      {blog.title} - {blog.author} <button onClick={toggleVisibility}>{buttonLabel}</button>
+      {blog.title} - {blog.author} <button id='view-button' className='viewButton' onClick={toggleVisibility}>{buttonLabel}</button>
       </div>
       <div style={showWhenVisible}> 
       <p>Url: {blog.url}</p>
-      <p>likes: {blog.likes}<button id="likes-button" onClick={() => addBlogLike(blog.id)}> like </button></p>
+      <p>likes: {blog.likes}<button id="likes-button" className='likeButton' onClick={() => addBlogLike(blog.id)}> like </button></p>
       <button id="remove-button" onClick={() => removeBlog(blog.id)}>remove</button>
       </div>
      

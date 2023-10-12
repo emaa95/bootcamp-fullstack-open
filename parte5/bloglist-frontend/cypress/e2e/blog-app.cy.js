@@ -40,7 +40,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe.only('when logged in', function(){
+  describe('when logged in', function(){
     beforeEach(function() {
       cy.login({ username: 'root', password: '1234' })
     })
@@ -115,6 +115,66 @@ describe('Blog app', function() {
       
       });
       
+  })
+
+  describe.only('the blogs are ordered by number of likes' , function(){
+    beforeEach(() => { 
+      cy.login({ username: 'root', password: '1234' })
+      cy.createBlog({
+        title:'another test4',
+        author: 'root',
+        url: 'www.test2.com',
+        likes: 8,
+      })
+      cy.createBlog({
+        title:'another test5',
+        author: 'root',
+        url: 'www.test2.com',
+        likes: 3,
+      })
+      cy.createBlog({
+        title:'another test6',
+        author: 'root',
+        url: 'www.test2.com',
+        likes: 7,
+      })
+
+      cy.contains('another test4').parent().as('blog1')
+      cy.contains('another test5').parent().as('blog2')
+      cy.contains('another test6').parent().as('blog3')
+    });
+    
+    it('they are ordered by number of likes', () => {
+      cy.get('#blog').then(blogs => {
+        cy.wrap(blogs[0]).contains(8)
+        cy.wrap(blogs[1]).contains(7)
+        cy.wrap(blogs[2]).contains(3)
+      })
+    });
+    
+
+    it.only('they are ordered by number of likes when the user clicks on like', () => {
+      //cy.get('@blog1').contains('view').click()
+      //cy.get('@blog2').contains('view').click()
+      cy.get('@blog3').contains('view').click()
+      //cy.get('@blog1').contains('like').as('like1')
+      //cy.get('@blog2').contains('like').as('like2')
+      cy.get('@blog3').contains('like').as('like3')
+
+      cy.get('@like3').click()
+      cy.wait(500)
+      cy.get('@like3').click()
+      
+      cy.get('#blog').then(blogs => {
+        cy.wrap(blogs[0]).contains(9)
+        cy.wrap(blogs[1]).contains(8)
+        cy.wrap(blogs[2]).contains(3)
+
+      })
+
+    });
+    
+    
   })
 
   
