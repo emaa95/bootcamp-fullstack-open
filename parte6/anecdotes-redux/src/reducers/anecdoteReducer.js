@@ -28,6 +28,10 @@ const anecdotesAtStart = [
 
     // El switch evalúa el tipo de acción y realiza diferentes operaciones según el tipo de acción.
     switch (action.type){
+        case 'NEW_ANECDOTE': 
+
+        const newAnecdote = action.data
+        return [...state, newAnecdote]
         
         case 'VOTE': 
         
