@@ -30,8 +30,7 @@ const anecdotesAtStart = [
     switch (action.type){
         case 'NEW_ANECDOTE': 
 
-        const newAnecdote = action.data
-        return [...state, newAnecdote]
+        return [...state, action.data]
         
         case 'VOTE': 
         
@@ -62,6 +61,24 @@ const anecdotesAtStart = [
         return state;
     }
     
+  }
+
+  export const createAnecdote = (content) => {
+    return {
+      type: 'NEW_ANECDOTE',
+      data: {
+        content, 
+        likes: 0,
+        id: getId()
+      }
+    }
+  }
+
+  export const addVote = (id) => {
+    return {
+      type: 'VOTE',
+      data: {id}
+    }
   }
 
   export default reducer
