@@ -1,46 +1,40 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { addVote} from './../reducers/anecdoteReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { voteAnecdote } from '../reducers/anecdotesSlice'
 
-
-function AnecdoteList() {
-
+const Anecdote = ({ anecdote }) => {
     const dispatch = useDispatch()
-    
-    const anecdotes = useSelector(({filter, anecdotes}) => {
-      if ( filter === null ) {
-        return anecdotes
-      }
-      console.log(anecdotes)
-      const regex = new RegExp( filter, 'i' )
-      return anecdotes.filter(anecdote => anecdote.content.match(regex))
-    })
 
+    const voteHandler = () => {
+      dispatch(voteAnecdote(anecdote.id))
+    }
 
-    const vote = (id) => {
-    console.log('vote', id)
-    dispatch(
-      addVote(id)
-    )
-  }
-
-  return (
+    return (
     <div>
-        {anecdotes.sort((a,b)=> (b.votes - a.votes)).map(anecdote =>
-        
-        <div key={anecdote.id}>
-          <div>
+        <div>
             {anecdote.content}
-          </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
-          </div>
         </div>
-        
-      )}
-      
+        <div>
+            has {anecdote.votes}
+            <button onClick={voteHandler}>vote</button>
+        </div>
     </div>
+    )
+}
+
+const AnecdoteList = () => {
+  const anecdotes = useSelector(({filter, anecdotes}) => {
+    if ( filter === null ) {
+      return anecdotes
+    }
+    const regex = new RegExp( filter, 'i' )
+    return anecdotes.filter(anecdote => anecdote.content.match(regex))
+  })
+
+  const byVotes = (b1, b2) => b2.votes - b1.votes
+
+  return(
+    anecdotes.slice().sort(byVotes).map(anecdote => <Anecdote key={anecdote.id} anecdote={anecdote} />)
   )
 }
 
