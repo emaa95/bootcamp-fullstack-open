@@ -1,10 +1,10 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { useQuery } from 'react-query'
+import {  useQuery } from 'react-query'
 import { getAnecdotes } from './components/requests'
 
 const App = () => {
-
+  
   const handleVote = (anecdote) => {
     console.log('vote')
   }
