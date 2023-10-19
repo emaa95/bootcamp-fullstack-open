@@ -64,20 +64,24 @@ const CreateNew = (props) => {
   const author = useField('text')
   const info = useField('text')
 
+  const { reset: contentReset, ...contentProps } = content
+  const { reset: authorReset, ...authorProps } = author
+  const { reset: infoReset, ...infoProps } = info
+
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: contentProps.value,
+      author: authorProps.value,
+      info: infoProps.value,
       votes: 0
     })
   }
 
   const resetSubmit = () => {
-    content.reset(),
-    author.reset(),
-    info.reset()
+    contentReset()
+    authorReset()
+    infoReset()
   }
 
   return (
@@ -86,15 +90,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content}/>
+          <input {...contentProps}/>
         </div>
         <div>
           author
-          <input {...author}/>
+          <input {...authorProps}/>
         </div>
         <div>
           url for more info
-          <input {...info}/>
+          <input {...infoProps}/>
         </div>
         <button>create</button>
         <button type='button' onClick={resetSubmit}> reset </button>
