@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 const successStyle = {
   color: 'green',
@@ -21,27 +21,29 @@ const errorStyle = {
   margin_bottom: 10,
 }
 
-function Notification({ errorMessage, successMessage }) {
-  if (errorMessage === null && successMessage === null) {
+const Notification = () => {
+
+  const notification = useSelector((state) => state.notification)
+
+  if (notification === null) {
     return null
-  } else if (successMessage) {
+  } 
+
+  if (notification.type === 'success')
+    {
     return (
       <div id="success" style={successStyle}>
-        {successMessage}
+        {notification.message}
       </div>
     )
   } else {
     return (
       <div id="error" style={errorStyle}>
-        {errorMessage}
+        {notification.message}
       </div>
     )
   }
 }
 
-Notification.propTypes = {
-  errorMessage: PropTypes.string,
-  successMessage: PropTypes.string,
-}
 
 export default Notification

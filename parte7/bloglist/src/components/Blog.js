@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
-function Blog({ blog, addBlogLike, removeBlog }) {
+function Blog({ blog }) {
+  const dispatch = useDispatch()
+
   const [visible, setVisible] = useState(false)
   const showWhenVisible = { display: visible ? '' : 'none' }
 
@@ -10,6 +14,17 @@ function Blog({ blog, addBlogLike, removeBlog }) {
   }
 
   const buttonLabel = visible ? 'hide' : 'view'
+
+  const addBlogLike = () => {
+    dispatch(likeBlog(blog))
+    dispatch(setNotification(`${blog.title} was updated successfully`, 'success', 5))
+    console.log(blog)
+  }
+
+  const removeBlog = () => {
+    dispatch(deleteBlog(blog.id))
+    dispatch(setNotification(`${blog.title} was removed successfully`, 'success', 5))
+  }
 
   const blogStyle = {
     paddingTop: 10,
@@ -38,24 +53,18 @@ function Blog({ blog, addBlogLike, removeBlog }) {
           <button
             id="likes-button"
             className="likeButton"
-            onClick={() => addBlogLike(blog.id)}
+            onClick={addBlogLike}
           >
             {' '}
             like{' '}
           </button>
         </p>
-        <button id="remove-button" onClick={() => removeBlog(blog.id)}>
+        <button id="remove-button" onClick={removeBlog}>
           remove
         </button>
       </div>
     </div>
   )
-}
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  addBlogLike: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
 }
 
 export default Blog
