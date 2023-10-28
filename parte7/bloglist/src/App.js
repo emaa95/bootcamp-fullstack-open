@@ -8,12 +8,12 @@ import { initialBlogs } from './reducers/blogReducer'
 import BlogLIst from './components/BlogLIst'
 import { initialUser } from './reducers/authReducer'
 import { initialUsers} from './reducers/userReducer'
-import { logout } from './reducers/authReducer'
 import UserList from './components/UserList'
 import {Routes, Route, useMatch} from 'react-router-dom'
 import Blog from './components/Blog'
 import { setNotification } from './reducers/notificationReducer'
 import { likeBlog } from './reducers/blogReducer'
+import Menu from './components/Menu'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -29,11 +29,6 @@ const App = () => {
     dispatch(initialUsers())
   }, [dispatch])
  
-  const handleLogout = async (event) => {
-    event.preventDefault()
-    dispatch(logout())
-  }
-
   const handleLikes = (blogToLike) => {
     dispatch(likeBlog(blogToLike))
     dispatch(
@@ -58,6 +53,7 @@ const App = () => {
     <div>
       <h1>BlogApp</h1>
       <Notification></Notification>
+      
       <Routes>
       <Route path="/users" element = 
         {auth === null ? (
@@ -67,12 +63,7 @@ const App = () => {
           </div>
         ) : (
           <div>
-          <p>
-                {auth.username} logged in
-                <button onClick={handleLogout} type="submit">
-                  logout
-                </button>
-              </p>
+              <Menu/>
               <UserList />
           </div>
         )}/>
@@ -84,8 +75,7 @@ const App = () => {
             </div>) : (
               <div>
                 <Notification/>
-                <p> {`${auth.username} logged in`}</p>
-               <button onClick={handleLogout} type='submit'>Logout</button>
+                <Menu/>
                 <h2>{auth.username}</h2>
                 <h3>added blogs</h3>
 
@@ -108,8 +98,7 @@ const App = () => {
         </div>
         ) : (
           <div>
-            <p> {`${auth.username} logged in`}</p>
-            <button onClick={handleLogout} type='submit'>Logout</button>
+           
 
             { !foundBlog 
               ? (null)
@@ -138,8 +127,7 @@ const App = () => {
         <LoginForm/>
       ) : (
         <div>
-          <p> {`${auth.username} logged in`}</p>
-          <button onClick={handleLogout} type='submit'>Logout</button>
+          <Menu/>
           <Togglable
             buttonLabel="new blog"
             buttonLabel2="cancel"
@@ -149,7 +137,6 @@ const App = () => {
           </Togglable>
           <h2>blogs</h2>
           <BlogLIst></BlogLIst>
-          <UserList></UserList>
         </div>
       )}/>
     </Routes>
