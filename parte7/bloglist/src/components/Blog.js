@@ -1,19 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { Link } from 'react-router-dom'
 
 function Blog({ blog }) {
   const dispatch = useDispatch()
-
-  const [visible, setVisible] = useState(false)
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  const buttonLabel = visible ? 'hide' : 'view'
 
   const addBlogLike = () => {
     dispatch(likeBlog(blog))
@@ -37,16 +29,9 @@ function Blog({ blog }) {
   return (
     <div style={blogStyle} id="blog" className="blog">
       <div>
-        {blog.title} - {blog.author}{' '}
-        <button
-          id="view-button"
-          className="viewButton"
-          onClick={toggleVisibility}
-        >
-          {buttonLabel}
-        </button>
+        <Link to={`/blogs/${blog.id}`}>{blog.title} - {blog.author}{' '}</Link>
       </div>
-      <div style={showWhenVisible}>
+      <div>
         <p>Url: {blog.url}</p>
         <p>
           likes: {blog.likes}

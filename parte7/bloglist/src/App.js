@@ -12,11 +12,14 @@ import { logout } from './reducers/authReducer'
 import UserList from './components/UserList'
 import {Routes, Route, useMatch} from 'react-router-dom'
 import Blog from './components/Blog'
+import { setNotification } from './reducers/notificationReducer'
+import { likeBlog } from './reducers/blogReducer'
 
 const App = () => {
   const dispatch = useDispatch()
   const auth = useSelector((state) => state.auth)
   const users = useSelector((state) => state.user)
+  const blogs = useSelector((state) => state.blog )
   
   const blogFormRef = useRef()
 
@@ -31,10 +34,23 @@ const App = () => {
     dispatch(logout())
   }
 
+  const handleLikes = (blogToLike) => {
+    dispatch(likeBlog(blogToLike))
+    dispatch(
+      setNotification(`Blog ${blogToLike.title} successfully updated`, 'success', 5)
+    )
+  }
+
   const userMatch = useMatch('/users/:id')
 
   const foundUser = userMatch 
   ? users.find(user => user.id === userMatch.params.id)
+  : null
+
+  const blogMatch = useMatch('/blogs/:id')
+
+  const foundBlog = blogMatch
+  ? blogs.find(blog => blog.id === blogMatch.params.id)
   : null
 
   return (
@@ -81,6 +97,40 @@ const App = () => {
             ) 
       }
 
+      />
+
+      <Route path='/blogs/:id' element={
+        auth === null 
+        ? (
+        <div>
+          <Notification/>
+          <LoginForm/>
+        </div>
+        ) : (
+          <div>
+            <p> {`${auth.username} logged in`}</p>
+            <button onClick={handleLogout} type='submit'>Logout</button>
+
+            { !foundBlog 
+              ? (null)
+              : (
+                <div>
+                  <h1>{foundBlog.title}</h1>
+                  <p>{foundBlog.url}</p>
+                  <p>
+                    {foundBlog.likes}
+                    <button onClick={() => handleLikes(foundBlog)}>
+                        like
+                    </button> 
+                  </p>
+                  <p>added by {foundBlog.author}</p>
+                </div>
+              )
+            }
+          </div>
+        )
+      }
+         
       />
     
       <Route path='/' element = 
