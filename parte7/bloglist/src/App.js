@@ -10,12 +10,14 @@ import { initialUser } from './reducers/authReducer'
 import { initialUsers} from './reducers/userReducer'
 import { logout } from './reducers/authReducer'
 import UserList from './components/UserList'
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, useMatch} from 'react-router-dom'
+import Blog from './components/Blog'
 
 const App = () => {
   const dispatch = useDispatch()
   const auth = useSelector((state) => state.auth)
-  console.log(auth)
+  const users = useSelector((state) => state.user)
+  
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -28,6 +30,12 @@ const App = () => {
     event.preventDefault()
     dispatch(logout())
   }
+
+  const userMatch = useMatch('/users/:id')
+
+  const foundUser = userMatch 
+  ? users.find(user => user.id === userMatch.params.id)
+  : null
 
   return (
     
@@ -52,12 +60,30 @@ const App = () => {
               <UserList />
           </div>
         )}/>
-    
+      
+      <Route path='/users/:id' element = {
+        auth === null ? ( <div>
+              <Notification />
+              <LoginForm />
+            </div>) : (
+              <div>
+                <Notification/>
+                <p> {`${auth.username} logged in`}</p>
+               <button onClick={handleLogout} type='submit'>Logout</button>
+                <h2>{auth.username}</h2>
+                <h3>added blogs</h3>
+
+                {!foundUser ? null : <div>
+                  {foundUser.blogs.map(blog => <Blog key={blog.id} blog={blog}></Blog>)}
+                </div>
+                }
+              </div>
+            ) 
+      }
+
+      />
     
       <Route path='/' element = 
-     
-      
-    
       {auth === null ? (
         <LoginForm/>
       ) : (
