@@ -14,6 +14,7 @@ import Blog from './components/Blog'
 import { setNotification } from './reducers/notificationReducer'
 import { likeBlog } from './reducers/blogReducer'
 import Menu from './components/Menu'
+import { comment } from './reducers/blogReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -34,6 +35,13 @@ const App = () => {
     dispatch(
       setNotification(`Blog ${blogToLike.title} successfully updated`, 'success', 5)
     )
+  }
+
+  const handleComment = (event) => {
+    event.preventDefault()
+    const commentToAdd = event.target.comment.value
+    event.target.comment.value = ''
+    dispatch(comment(foundBlog, commentToAdd))
   }
 
   const userMatch = useMatch('/users/:id')
@@ -98,11 +106,11 @@ const App = () => {
         </div>
         ) : (
           <div>
-           
-
+            <Menu/>
             { !foundBlog 
               ? (null)
               : (
+                <div>
                 <div>
                   <h1>{foundBlog.title}</h1>
                   <p>{foundBlog.url}</p>
@@ -113,6 +121,22 @@ const App = () => {
                     </button> 
                   </p>
                   <p>added by {foundBlog.author}</p>
+                </div>
+                <div>
+                  <h3>comments</h3>
+                  <div>
+                  <form onSubmit={handleComment}>
+                    <input id="comment" name="comment" type='text' />
+                    <button id='addComent-button' type='submit'>add comment</button>
+                  </form>
+                  </div>
+                  { foundBlog.comments.length === 0 
+                    ? <p>no hay comentarios</p>
+                    : <ul>
+                        {foundBlog.comments.map((comment) => <li key={comment} >{comment}</li>)}
+                      </ul>
+                  }
+                </div>
                 </div>
               )
             }

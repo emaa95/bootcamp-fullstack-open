@@ -17,7 +17,7 @@ function Blog({ blog }) {
     dispatch(deleteBlog(blog.id))
     dispatch(setNotification(`${blog.title} was removed successfully`, 'success', 5))
   }
-
+  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,

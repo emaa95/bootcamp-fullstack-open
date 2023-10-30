@@ -10,13 +10,28 @@ const blogReducer = (state = [], action) => {
             return [...state, action.data]
         
         case 'UPDATE_BLOG':
-            
-        const id = action.data.id;
-        return state.map(blog => (blog.id !== id ? blog : { ...blog, likes: blog.likes + 1 }));
+            {
+                const id = action.data.id
+                const updatedBlog = state.find((blog) => blog.id === id)
+                const changedBlog = {
+                  ...updatedBlog,
+                  likes: updatedBlog.likes + 1
+                }
+                return state.map((blog) => (blog.id !== id ? blog : changedBlog))
+              }
 
         case 'REMOVE_BLOG': 
             return state.filter(blog => blog.id !== action.data);
 
+        case 'ADD_COMMENT': 
+        const id = action.data.id
+        const updatedBlog = state.find((blog) => blog.id === id)
+        const changedBlog = {
+          ...updatedBlog,
+          comments: action.data.comments
+        }
+        return state.map((blog) => (blog.id !== id ? blog : changedBlog))
+        
         default:
             return state
     }
@@ -74,6 +89,23 @@ export const deleteBlog = (id) => {
         } catch (exception){
             dispatch(setNotification(`error to delete blog`, 'error', 5))
         }
+    }
+}
+
+export const comment = (blog, comment) => {
+    return async (dispatch) => {
+    try {
+        const updateBlog = await blogService.update({
+            ...blog,
+            comments: blog.comments.concat([comment])
+        })
+        dispatch({
+            type: 'ADD_COMMENT',
+            data: updateBlog
+        })    
+    } catch (exception){
+        dispatch(setNotification(`cannot update blog ${blog.title}`, 'error', 5))
+    }
     }
 }
 
