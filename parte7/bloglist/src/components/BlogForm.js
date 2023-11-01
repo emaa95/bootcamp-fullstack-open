@@ -2,6 +2,9 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import Button from "@mui/material/Button";
+import TextField from '@mui/material/TextField';
+import { Stack } from '@mui/material';
 
 function BlogForm() {
   
@@ -35,18 +38,12 @@ function BlogForm() {
     <div>
       <h1>Create a new blog</h1>
       <form onSubmit={addBlog}>
-        <div>
-          Title:{' '}
-          <input id="title" />
-        </div>
-        <div>
-          Author:{' '}
-          <input id="author" />
-        </div>
-        <div>
-          Url: <input id="url"  />
-        </div>
-        <button id="blog-button">Create</button>
+        <Stack direction={"row"} spacing={2}>
+        <TextField id="title" label="Title" variant="outlined" size='small'/>
+        <TextField id="author" label="Author" variant="outlined" size='small'/>
+        <TextField id="url" label="Url" variant="outlined" size='small'/>
+        <Button id="blog-button" variant='contained'>Create</Button>
+        </Stack>
       </form>
     </div>
   )
