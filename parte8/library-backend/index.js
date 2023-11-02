@@ -1,5 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { UserInputError } = require('apollo-server')
+const { v4: uuidv4 } = require('uuid');
 
 let authors = [
   {
@@ -119,6 +121,15 @@ const typeDefs = `
     allBooks( author: String, genre: String) : [Book!]!
     allAuthors: [Author!]!
   }
+
+  type Mutation {
+    addBook(
+    title: String!
+    published: Int!
+    author: String!
+    genres: [String!]!
+    ): Book
+  }
 `
 
 const resolvers = {
@@ -146,6 +157,26 @@ const resolvers = {
         return genreBooks
       }
       return books
+    }
+  },
+
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuidv4() }
+      const foundBook = books.find(book => book.title === args.title)
+      const foundAuthor = authors.find(existingAuthor => existingAuthor.name === args.author);
+      if (foundBook) {
+        throw new UserInputError('Book already exists',{invalidArgs: args.title}) 
+      }
+
+      if (!foundAuthor) {
+        const newAuthor = { name: args.author, id: uuidv4() };
+        authors = authors.concat(newAuthor);
+      }
+
+      books = books.concat(book)
+      return book
+
     }
   }
 }
