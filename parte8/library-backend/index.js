@@ -1,7 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { UserInputError } = require('apollo-server')
-
+const { GraphQLError } = require('graphql')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -73,6 +73,7 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     allAuthors: async () => await Author.find({}),
     allBooks: async (root, args) => {
+
       const foundAuthor = await Author.findOne({ name: args.author })
       if (args.author) {
 
@@ -92,7 +93,13 @@ const resolvers = {
       const foundAuthor = await Author.findOne({ name: args.author})
 
       if (foundBook) {
-        throw new UserInputError('Book already exists',{invalidArgs: args.title}) 
+        throw new GraphQLError('Book already exists', {
+          extensions: {
+              code: "BAD_REQUEST",
+              invalidArgs: args.title,
+          }
+        }
+       ) 
       }
 
       if (!foundAuthor) {
@@ -100,9 +107,14 @@ const resolvers = {
         try {
           await author.save()
         } catch (error) {
-          throw new UserInputError(error.message , {
-            invalidArgs: args
-          })
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+                code: "BAD_REQUEST_INPUT",
+                invalidArgs: args.author,
+                error
+            }
+          }
+         ) 
         }
       }
       
@@ -113,9 +125,14 @@ const resolvers = {
       try {
         await book.save()
       } catch (error) {
-        throw new UserInputError(error.message, {
-          invalidArgs: args,
-        })
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+              code: "BAD_REQUEST",
+              invalidArgs: args,
+              error
+          }
+        }
+       ) 
       }
       return book
     },
@@ -123,7 +140,13 @@ const resolvers = {
       const author = await Author.findOne({name: args.name})
 
       if (!author) {
-        return null
+        throw new GraphQLError('Author not found', {
+          extensions: {
+              code: "BAD_REQUEST",
+              invalidArgs: args.name,
+          }
+        }
+       ) 
       }
 
       author.born = args.setBornTo
