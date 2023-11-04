@@ -61,29 +61,27 @@ const typeDefs = `
 
 const resolvers = {
   Author: {
-    bookCount: (root) => {
-      const author = authors.find((author) => author.name === root.name);
-      if (!author) {
-        return 0;
-      }
-      return books.filter((book) => book.author === author.name).length;
+    bookCount: async (root) => {
+      const foundAuthor = await Author.findOne({name : root.name})
+      const foundBooks = await Book.find({ author: foundAuthor.id})
+      return foundBooks.length
     },
   },
 
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allAuthors: () => authors,
-    allBooks: (root, args) => {
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allAuthors: async () => await Author.find({}),
+    allBooks: async (root, args) => {
+      const foundAuthor = await Author.findOne({ name: args.author })
       if (args.author) {
-        const authorBooks = books.filter((book) => book.author === args.author)
-      return authorBooks
+
+        return  await Book.find({ author: foundAuthor.id }).populate('author')
       }
       if (args.genre){
-        const genreBooks = books.filter((book) => book.genres.includes(args.genre) )
-        return genreBooks
+        return Book.find({ genres: { $in: [args.genre]}})
       }
-      return books
+      return Book.find({}).populate('author')
     }
   },
 
@@ -121,18 +119,27 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({name: args.name})
 
       if (!author) {
         return null
       }
 
-      const updateAuthor = {...author, born: args.setBornTo}
-      authors = authors.map(author => author.name === args.name ? updateAuthor : author)
-      return updateAuthor
+      author.born = args.setBornTo
+
+      try {
+        await author.save()
+      } catch(error) {
+         throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+          }
+        return author
     }
+    
   }
+  
 }
 
 const server = new ApolloServer({
