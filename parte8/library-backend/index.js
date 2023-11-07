@@ -152,7 +152,7 @@ const resolvers = {
         }
       }
       
-      const newAutor = await Author.findOne({ name: args.author, born: null})
+      const newAutor = await Author.findOne({ name: args.author})
 
       const book = new Book({ ...args, author: newAutor })
 
