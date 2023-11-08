@@ -5,7 +5,7 @@ import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
-  const [published, setPublished] = useState(null)
+  const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
   
@@ -15,10 +15,6 @@ const NewBook = (props) => {
         { query: ALL_AUTHORS}
     ],
 
-    onError: (error) => {
-        props.notify(error.graphQLErrors[0].message)
-        
-    }
   }) 
 
   if (!props.show) {
