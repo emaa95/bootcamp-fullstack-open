@@ -6,6 +6,7 @@ import Notify from './components/Notify'
 import BornForm from './components/BornForm'
 import { useApolloClient } from '@apollo/client'
 import LoginForm from './components/LoginForm'
+import Recommended from './components/Recommended'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -35,6 +36,8 @@ const App = () => {
         {token && <button onClick={() => setPage('add')}>add book</button>}
 
         {token && <button onClick={() => setPage('changeBorn')}> change born</button>}
+
+        {token && <button onClick={() => setPage('recommended')}> recommended</button>}
         
         {/* Mostrar el botón de "logout" solo si el usuario ha iniciado sesión */}
         {token && <button onClick={logout}>logout</button>}
@@ -54,6 +57,7 @@ const App = () => {
           <Books show={page === 'books' } notify={notify} />
           
               <NewBook show={page === 'add'} notify={notify} />
+              <Recommended show={page === 'recommended'} notify={notify}/>
               <BornForm show= {page === 'changeBorn'} notify={notify} />
 
       
