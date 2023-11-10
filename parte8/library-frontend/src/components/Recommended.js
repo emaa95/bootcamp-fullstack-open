@@ -15,8 +15,8 @@ const Recommended = ({show}) => {
         }
     }, [setFavoriteBooks, result])
 
-    useEffect(() => {
-        if (currentUser.data) {
+    useEffect(() => { 
+        if (currentUser.data && currentUser.data.me ) {
             getFavoriteBooks({ variables: { genre: currentUser.data.me.favoriteGenre}})
         }
     }, [getFavoriteBooks, currentUser])

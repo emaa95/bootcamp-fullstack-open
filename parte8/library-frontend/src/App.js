@@ -4,15 +4,25 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Notify from './components/Notify'
 import BornForm from './components/BornForm'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import LoginForm from './components/LoginForm'
 import Recommended from './components/Recommended'
+import { BOOK_ADDED } from './queries'
+
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+        const addedBook = data.data.bookAdded
+        notify(`${addedBook.title} added successfully`)
+      }
+        
+  })
 
   const notify = (message) => {    
     setErrorMessage(message)    
@@ -59,9 +69,6 @@ const App = () => {
               <NewBook show={page === 'add'} notify={notify} />
               <Recommended show={page === 'recommended'} notify={notify}/>
               <BornForm show= {page === 'changeBorn'} notify={notify} />
-
-      
-   
         </div>
       )}
     </div>
