@@ -8,14 +8,14 @@ const Author = require('./models/author')
 const User = require('./models/user')
 
 const resolvers = {
+    
     Author: {
       bookCount: async (root) => {
-        const foundAuthor = await Author.findOne({name : root.name})
-        const foundBooks = await Book.find({ author: foundAuthor.id})
-        return foundBooks.length
+        const foundAuthor = await Author.findOne({ name: root.name }).populate('books');
+        return foundAuthor.books.length;
       },
     },
-  
+    
     Query: {
       bookCount: async () => Book.collection.countDocuments(),
       authorCount: async () => Author.collection.countDocuments(),
