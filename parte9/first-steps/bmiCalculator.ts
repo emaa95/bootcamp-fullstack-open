@@ -36,7 +36,9 @@ const calculateBmi = (height: number, weight: number): string => {
         return 'Obesidad (media)'
     } else if (bmi >= 40) {
         return 'Obesidad (morbida)'
-    } 
+    } else{
+        return 'No hay respuesta para esos parametros'
+    }
 }   
 
 const args = process.argv.slice(2);
