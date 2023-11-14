@@ -1,21 +1,28 @@
 interface ExerciseValues {
-    exerciseHours: Array<number>;
     target: number;
+    exerciseHours: Array<number>;
+    
 }
 
 
 export const parseExerciseArguments = (
-  target: number,
-  dailyExercises: Array<number>
+  args: string[]
 ): ExerciseValues => {
-  if (!isNaN(target) && !dailyExercises.some(isNaN)) {
-    return {
-      target: target,
-      exerciseHours: dailyExercises
-    };
-  } else {
-    throw new Error('Provided values were not numbers!');
-  }
+
+    if (args.length < 2) throw new Error('Incorrect number of arguments')
+    
+    const target = Number(args[0]);
+    const exerciseHours = args.slice(1).map(hour => Number(hour));
+
+    if (!isNaN(target) && !exerciseHours.some(isNaN)) {
+        return {
+            target,
+            exerciseHours
+        };
+
+    } else {
+        throw new Error('Provided values were not numbers!');
+    }
 };
 
 interface AverageValues {
@@ -61,4 +68,13 @@ const calculateExercises = (target: number, exerciseHours: Array<number>): Avera
     }
 }
 
-console.log(calculateExercises(2,[3, 0, 2, 4.5, 0, 3, 1]))
+const args = process.argv.slice(2);
+try {
+    const { target, exerciseHours } = parseExerciseArguments(args);
+    const result = calculateExercises(target, exerciseHours);
+    console.log(result);
+    console.log(exerciseHours)
+} catch (error) {
+    console.error(error.message);
+}
+

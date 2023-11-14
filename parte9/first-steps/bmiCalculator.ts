@@ -1,7 +1,6 @@
-
 interface BmiValues  {
-    height: Number,
-    weight: Number
+    height: number,
+    weight: number
 } 
 
 const parseBmiArguments = (args: string[]): BmiValues => {
@@ -40,4 +39,13 @@ const calculateBmi = (height: number, weight: number): string => {
     } 
 }   
 
-console.log(calculateBmi(180 , 74))
+const args = process.argv.slice(2);
+try {
+    const { height, weight } = parseBmiArguments(args);
+    const result = calculateBmi(height, weight);
+    console.log(result);
+} catch (error) {
+    console.error(error.message);
+}
+
+
