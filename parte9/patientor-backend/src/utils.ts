@@ -49,8 +49,9 @@ const parseGender = (gender: unknown): Gender => {
     }
     return gender;
 };
-  
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, occupation: unknown};  
+
+
+type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, entries: unknown, occupation: unknown};  
 
 
 const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation}: Fields): NewPatientEntry => {
@@ -59,8 +60,9 @@ const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation}: Fields)
         name: parseName(name),
         dateOfBirth: parseDate(dateOfBirth),
         ssn: parseSsn(ssn),
-        gender:parseGender(gender),
-        occupation:parseOccupation(occupation)
+        gender: parseGender(gender),
+        occupation: parseOccupation(occupation),
+        entries: []
     };
 
     return newEntry;
