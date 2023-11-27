@@ -10,10 +10,11 @@ const getEntries = () : Array<PatientEntry> => {
 
 
 const getNonSensitiveEntries = (): NonSensitivePatientEntry[]  => {
-    return patients.map(({ id, name, dateOfBirth, gender, occupation}) => ({
+    return patients.map(({ id, name, dateOfBirth, ssn, gender, occupation}) => ({
         id,
         name,
         dateOfBirth,
+        ssn,
         gender,
         occupation
     })) ;

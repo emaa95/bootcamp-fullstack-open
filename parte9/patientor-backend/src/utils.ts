@@ -51,7 +51,7 @@ const parseGender = (gender: unknown): Gender => {
 };
 
 
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, entries: unknown, occupation: unknown};  
+type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, occupation: unknown};  
 
 
 const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation}: Fields): NewPatientEntry => {
