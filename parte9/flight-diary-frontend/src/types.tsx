@@ -14,7 +14,6 @@ export enum Weather {
   }
 
 export interface Flight {
-    id: number;
     date: string;
     weather: Weather;
     visibility: Visibility;
@@ -28,5 +27,3 @@ export interface ContentProps {
 export interface FlightProps {
     flight: Flight;
 }
-
-export type NewFlight = Omit<Flight,'id'>
