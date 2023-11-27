@@ -1,4 +1,4 @@
-import { Gender, NewPatientEntry } from "./types";
+import { Gender, NewPatientEntry, Entry} from "./types";
 
 const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
@@ -50,11 +50,20 @@ const parseGender = (gender: unknown): Gender => {
     return gender;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const parseEntries = (entries: any): Entry[] => {
+    if (!entries) {
+      throw new Error(`Incorrect or missing entries: ${entries}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return entries;
+  };
+  
 
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, occupation: unknown};  
+type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, occupation: unknown, entries: unknown};  
 
 
-const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation}: Fields): NewPatientEntry => {
+const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation, entries}: Fields): NewPatientEntry => {
 
     const newEntry: NewPatientEntry = {
         name: parseName(name),
@@ -62,7 +71,7 @@ const toNewPatientEntry = ({name , dateOfBirth, ssn, gender,occupation}: Fields)
         ssn: parseSsn(ssn),
         gender: parseGender(gender),
         occupation: parseOccupation(occupation),
-        entries: []
+        entries: parseEntries(entries) || []
     };
 
     return newEntry;
