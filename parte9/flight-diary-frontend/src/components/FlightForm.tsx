@@ -4,7 +4,7 @@ import { Weather, Visibility, Flight } from '../types';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
+import { Button, FormControlLabel, Grid, Radio, RadioGroup } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import axios, { AxiosError } from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,34 +30,37 @@ const FlightForm: React.FC<FormProps> = ({ onNewFlight }) => {
     });
   };
 
+  const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(Visibility.Good);
+
+  const handleVisibilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedVisibility(event.target.value as Visibility);
+  };
+
+  const [selectedWeather, setSelectedWeather] = useState<Weather>(Weather.Sunny);
+
+  const handleWeatherChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedWeather(event.target.value as Weather);
+  };
+
   const handleAxiosError = (error: AxiosError) => {
   if (error.response) {
-    // El servidor respondió con un código de estado fuera del rango 2xx
     console.error('Error de respuesta del servidor:', error.response.data);
 
-    // Acceder al mensaje específico del backend (si está disponible)
     const backendErrorMessage = (error.response.data as { message?: string })?.message;
 
-    // Mostrar notificación de error con el mensaje específico del backend
     toast.error(backendErrorMessage ?? 'Error al crear el vuelo');
 
-    // Puedes ajustar la duración y otras opciones según tus necesidades
   } else if (error.request) {
-    // La solicitud fue hecha, pero no se recibió respuesta
     console.error('No se recibió respuesta del servidor');
 
-    // Mostrar notificación de error
     toast.error('Error al crear el vuelo');
 
-    // Puedes ajustar la duración y otras opciones según tus necesidades
   } else {
-    // Algo sucedió al configurar la solicitud que desencadenó un error
     console.error('Error al configurar la solicitud:', error.message);
 
-    // Mostrar notificación de error
+ 
     toast.error('Error al crear el vuelo');
 
-    // Puedes ajustar la duración y otras opciones según tus necesidades
   }
 };
 
@@ -93,7 +96,7 @@ const FlightForm: React.FC<FormProps> = ({ onNewFlight }) => {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
     <ToastContainer position="top-center"
         autoClose={5000}
         hideProgressBar={false}
@@ -105,36 +108,44 @@ const FlightForm: React.FC<FormProps> = ({ onNewFlight }) => {
         pauseOnHover
         theme="light"/>
     <form onSubmit={flightCreation}>
+    <Grid container direction="row" spacing={2}>
+      <Grid item>
       <FormControl>
         <FormLabel>Date</FormLabel>
         <TextField
           name="date"
+          id="outlined-basic" variant="outlined"
           onChange={handleInputChange}
           value={inputValues.date}
-          type="text"
+          type="date"
+          size='small'
         />
       </FormControl>
+      </Grid>
 
+      <Grid item>
       <FormControl>
-        <FormLabel>Visibility</FormLabel>
-        <TextField
-          name="visibility"
-          onChange={handleInputChange}
-          value={inputValues.visibility}
-          type="text"
-        />
+        <FormLabel id="demo-row-radio-buttons-group-label">Visibility</FormLabel>
+        <RadioGroup aria-label="visibility" name="visibility" value={selectedVisibility} onChange={handleVisibilityChange}>
+        {Object.values(Visibility).map((visibility) => (
+          <FormControlLabel key={visibility} value={visibility} control={<Radio />} label={visibility} />
+        ))}
+      </RadioGroup>
       </FormControl>
-
+      </Grid>
+      
+      <Grid item>
       <FormControl>
-        <FormLabel>Weather</FormLabel>
-        <TextField
-          name="weather"
-          onChange={handleInputChange}
-          value={inputValues.weather}
-          type="text"
-        />
+      <FormLabel id="demo-row-radio-buttons-group-label">Weather</FormLabel>
+        <RadioGroup aria-label="weather" name="weather" value={selectedWeather} onChange={handleWeatherChange}>
+        {Object.values(Weather).map((weather) => (
+          <FormControlLabel key={weather} value={weather} control={<Radio />} label={weather} />
+        ))}
+      </RadioGroup>
       </FormControl>
+      </Grid>
 
+      <Grid item>
       <FormControl>
         <FormLabel>Comment</FormLabel>
         <TextField
@@ -142,10 +153,14 @@ const FlightForm: React.FC<FormProps> = ({ onNewFlight }) => {
           onChange={handleInputChange}
           value={inputValues.comment}
           type="text"
+          size='small'
         />
       </FormControl>
-
-      <Button type="submit">Submit</Button>
+      </Grid>
+      <Grid item>
+      <Button type="submit"  style={{ marginTop: '25px' }}>ADD</Button>
+      </Grid>
+      </Grid>
     </form>
     </div>
   );

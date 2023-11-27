@@ -27,7 +27,7 @@ function App() {
         </h1>
         <Content flightParts={flights}></Content>
 
-        {/* Renderiza el componente FlightForm y pasa la función handleNewFlight como prop */}
+        <h1>Add new entry</h1>
         <FlightForm onNewFlight={handleNewFlight} />
       </div>
     </>

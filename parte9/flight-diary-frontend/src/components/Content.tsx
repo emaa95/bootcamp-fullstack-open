@@ -7,7 +7,7 @@ import { faCloud , faCalendarDays, faEye } from '@fortawesome/free-solid-svg-ico
 
 const Content : React.FC<ContentProps> = ({flightParts}) => {
     return (
-        <div>
+        <div style={{marginBottom:"20px"}}>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth:650}}>
                     <TableHead>
@@ -25,7 +25,7 @@ const Content : React.FC<ContentProps> = ({flightParts}) => {
                     </TableHead>
                     <TableBody>
                     {flightParts.map((flight: Flight) => (
-                    <TableRow key={flight.id}>
+                    <TableRow key={flight.date}>
                         <FlightDetails flight={flight} />
                     </TableRow>
                     ))}
