@@ -1,5 +1,5 @@
 import React from 'react';
-import { Patient } from '../../types';
+import { Diagnosis, Patient } from '../../types';
 import { useParams } from 'react-router-dom';
 import Icon from '@mui/material/Icon';
 import MaleIcon from '@mui/icons-material/Male';
@@ -9,9 +9,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface PatientDetailsProps {
     patients: Patient[];
+    diagnoses: Diagnosis[];
 }
 
-const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
+
+const PatientDetails : React.FC<PatientDetailsProps> = ({patients, diagnoses}) => {
     
     const { id } = useParams<{ id: string }>();
 
@@ -51,14 +53,21 @@ const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
             
             {entry.date} {entry.description}  
             <ul>
-            {entry.diagnosisCodes ? (
-              entry.diagnosisCodes.map((diagnose, i) => (
-             <li key={i}>{diagnose}</li>
-            ))
-            ) : (
-              <li>No diagnosis codes available</li>
-            )}
-            </ul>
+        {entry.diagnosisCodes ? (
+          entry.diagnosisCodes.map((diagnoseCode, j) => {
+            // Buscar el objeto Diagnosis que coincide con el código
+            const diagnosis = diagnoses.find(d => d.code === diagnoseCode);
+
+            return (
+              <li key={j}>
+               {diagnoseCode} {diagnosis ? diagnosis.name : 'Unknown Diagnosis'}
+              </li>
+            );
+          })
+        ) : (
+          <li>No diagnosis codes available</li>
+        )}
+      </ul>
           </div>
         ))}</p>
             </div>
