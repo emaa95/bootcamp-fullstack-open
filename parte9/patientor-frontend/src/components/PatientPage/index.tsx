@@ -45,6 +45,22 @@ const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
             </h2>
             <p>ssh: {patient.ssn}</p>
             <p>occupation: {patient.occupation}</p>
+            <h3>entries</h3>
+            <p>{patient.entries.map((entry, i) => (
+          <div key={i}>
+            
+            {entry.date} {entry.description}  
+            <ul>
+            {entry.diagnosisCodes ? (
+              entry.diagnosisCodes.map((diagnose, i) => (
+             <li key={i}>{diagnose}</li>
+            ))
+            ) : (
+              <li>No diagnosis codes available</li>
+            )}
+            </ul>
+          </div>
+        ))}</p>
             </div>
         );
     }
