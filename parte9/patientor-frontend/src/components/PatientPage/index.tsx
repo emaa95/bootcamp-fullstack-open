@@ -1,5 +1,5 @@
-import React from 'react';
-import { Diagnosis, Entry, Patient } from '../../types';
+import React, { useState } from 'react';
+import { Diagnosis, Entry, EntryWithoutId, Patient } from '../../types';
 import { useParams } from 'react-router-dom';
 import Icon from '@mui/material/Icon';
 import MaleIcon from '@mui/icons-material/Male';
@@ -9,7 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Hospital from './Hospital';
 import HealthCheck from './HealthCheck';
 import OccupationalHealthcare from './OccupationalHealthcare';
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
+import AddEntryModal from '../AddEntryModal';
+import axios from 'axios';
+import patientService from '../../services/patients';
 
 interface PatientDetailsProps {
     patients: Patient[];
@@ -39,11 +42,43 @@ const EntryDetails: React.FC<{entry: Entry}> = ({entry}) => {
 };
 
 const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
+   const [modalOpen, setModalOpen] = useState<boolean>(false);
+   const [error, setError] = useState<string>();
+  
+   const openModal = (): void => setModalOpen(true);
+
+    const closeModal = (): void => {
+      setModalOpen(false);
+      setError(undefined);
+    };
+
+    const submitNewEntry = async (values: EntryWithoutId) => {
+      try {
+          if(patient){
+              const entry = await patientService.addEntry(patient.id, values);
+              patient = {...patient, entries: patient.entries.concat(entry)};
+              setModalOpen(false);
+          }
+      } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
     
     const { id } = useParams<{ id: string }>();
 
 
-    const patient = Object.values(patients).find(
+    let patient = Object.values(patients).find(
         (patient: Patient) => patient.id === id
       );
     
@@ -84,6 +119,17 @@ const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
             ))}
           </Grid>
         )}
+
+            <AddEntryModal
+            onSubmit={submitNewEntry}
+            error={error}
+            onClose={closeModal}
+            modalOpen={modalOpen}
+        />
+        <Button variant="contained" onClick={() => openModal()}>
+         Add New Entry
+       </Button>
+        
             </div>
         );
     }

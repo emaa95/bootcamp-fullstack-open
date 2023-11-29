@@ -39,12 +39,14 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
   };
 }
 
+export interface Discharge {
+  date: string;
+  criteria: string;
+}
+
 export interface HospitalEntry extends BaseEntry {
   type: 'Hospital';
-  discharge: {
-    date: string;
-    criteria: string;
-  };
+  discharge: Discharge
 }
 
 export type Entry =
@@ -63,3 +65,12 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export type EntryFormValues = Omit<HospitalEntry, "id">;
+
+type UnionOmit<T, K extends string | number | symbol> 
+    = T extends unknown ?
+        Omit<T, K> 
+        : never;
+
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;
