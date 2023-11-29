@@ -1,12 +1,24 @@
 import { SyntheticEvent, useState } from "react";
-import { Diagnosis, EntryFormValues} from "../../types";
-import { SelectChangeEvent } from "@mui/material";
+import { Diagnosis, EntryWithoutId, HealthCheckRating} from "../../types";
+import { InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface Props {
     onCancel: () => void;
-    onSubmit: (values: EntryFormValues) => void;
+    onSubmit: (values: EntryWithoutId) => void;
 }
 
+/*
+interface HealthCheckRatingOption {
+    value: number;
+    label: string;
+}
+
+const HealthCheckRatingOptions: HealthCheckRatingOption[] = Object.values(HealthCheckRating).filter((value) => typeof value === "number")
+.map((v) => ({
+    value: v as number,
+    label: HealthCheckRating[v as number]
+}));
+*/
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -14,6 +26,23 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     const [diagnosisCodes, setDiagnosisCodes] = useState<Array<Diagnosis["code"]>>([]);
     const [dischargeDate, setDischargeDate] = useState('');
     const [criteria, setCriteria] = useState('');
+    const [employerName, setEmployerName] = useState('');
+    const [sickLeaveStart, setSickLeaveStart] = useState('');
+    const [sickLeaveEnd, setSickLeaveEnd] = useState('');
+    const [entryOptions, setEntryOptions] = useState('');
+    const [healthCheckRating, setHealthCheckRating] = useState(HealthCheckRating.Healthy);
+
+    const onHealthCheckRAtingChange = (event: SelectChangeEvent<string>) => {
+        event.preventDefault();
+
+        const value = Number(event.target.value);
+
+        const healthCheckRating = Object.values(HealthCheckRating);
+    
+        if (value && healthCheckRating.includes(value)) {
+            setHealthCheckRating(value);
+        }
+    };
 
     const onDiagnosisCodesChange = (event: SelectChangeEvent<string[]>) => {
         event.preventDefault();
@@ -28,26 +57,59 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
     const addEntry = (event: SyntheticEvent) => {
         event.preventDefault();
-        onSubmit({
-            type: "Hospital",
+        
+        const baseEntry = {
             description,
             date,
             specialist,
             diagnosisCodes,
-            discharge: {
-                date: dischargeDate, 
-                criteria
-            }
-        });
-        setDescription('');
-        setDate('');
-        setSpecialist('');
-        setDiagnosisCodes([]);
-        setDischargeDate('');
-        setCriteria('');
+        };
+        
+        switch(entryOptions){
+            case "HealthCheck":
+                onSubmit({
+                    type: "HealthCheck",
+                    ...baseEntry,
+                    healthCheckRating
+                });
+                break;
+            case "Hospital": 
+                onSubmit({
+                    type: "Hospital",
+                    ...baseEntry,
+                    discharge: {
+                        date: dischargeDate,
+                        criteria
+                    }
+                });
+                break;
+
+            case "OccupationalHealthcare":
+                onSubmit({
+                    type: "OccupationalHealthcare",
+                    ...baseEntry,
+                    employerName,
+                    sickLeave: sickLeaveStart && sickLeaveEnd ? {
+                        startDate: sickLeaveStart,
+                        endDate: sickLeaveEnd
+                    } : undefined
+                });
+        }
     };
 
     return (
+        <div>
+            <InputLabel>Entry Options</InputLabel>
+            <Select 
+            label="Option"
+            fullWidth
+            value={entryOptions}
+            onChange={({target}) => setEntryOptions(target.value)}
+            >
+                <MenuItem key="HealthCheck" value="HealthCheck">Health Check</MenuItem>
+                <MenuItem key="Hospital" value="Hospital">Hospital</MenuItem>
+                <MenuItem key="OccupationalHealthcare" value="OccupationalHealthcare">Occupational Healthcare</MenuItem>
+            </Select>
         <form onSubmit={addEntry}>
         <div>
           <label>Description:</label>
@@ -85,27 +147,78 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             onChange={(e) => onDiagnosisCodesChange(e)}
           />
         </div>
-        <div>
-          <label>Discharge Date:</label>
-          <input
-            type="text"
-            name="dischargeDate"
-            value={dischargeDate}
-            onChange={(e) => setDischargeDate(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Discharge Criteria:</label>
-          <input
-            type="text"
-            name="criteria"
-            value={criteria}
-            onChange={(e) => setCriteria(e.target.value)}
-          />
-        </div>
+        {entryOptions === "HealthCheck" && 
+            <>
+                <label>HealthCheckRating</label>
+                <input  
+                    type="number"
+                    name="healtCheckRating"
+                    value={healthCheckRating}
+                    onChange={onHealthCheckRAtingChange}
+                />
+            </>
+        }
+        {
+            entryOptions === "Hospital" && 
+            <>
+                <label>Discharge Date</label>
+                <input  
+                    type="text"
+                    name="dischargeDate"
+                    value={dischargeDate}
+                    onChange={({target}) => setDischargeDate(target.value)}
+                />
+                <label>Discharge Criteria</label>
+                <input  
+                    type="text"
+                    name="criteria"
+                    value={criteria}
+                    onChange={({target}) => setCriteria(target.value)}
+                />
+            </>
+        }
+        {
+            entryOptions === "OccupationalHealthcare" && 
+            <>
+                <label>
+                    Employer Name
+                </label>
+                <input  
+                    type="text"
+                    name="employerName"
+                    value={employerName}
+                    onChange={({target}) => setEmployerName(target.value)}
+                />
+                <label>
+                    Sick Leave: 
+                </label>
+                <label>
+                    Start Date
+                </label>
+                <input 
+                    type="text"
+                    name="sickLeaveStart"
+                    value={sickLeaveStart}
+                    onChange={({target}) => setSickLeaveStart(target.value)}
+
+                />
+                <label>
+                    End Start
+                </label>
+                <input 
+                    type="text"
+                    name="sickLeaveEnd"
+                    value={sickLeaveEnd}
+                    onChange={({target}) => setSickLeaveEnd(target.value)}
+
+                />
+            </>
+        }
+
         <button type="submit">Submit</button>
         <button type="button" onClick={onCancel}>Cancel</button>
       </form>
+      </div>
       );
     
 };
