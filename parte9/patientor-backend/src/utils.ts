@@ -57,7 +57,7 @@ const parseEntries = (entries: unknown): Entry[] => {
     return entries as Entry[];
   };
 
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown,gender: unknown, occupation: unknown, entries: unknown};  
+type Fields = { name: unknown, dateOfBirth: unknown, ssn?: unknown,gender: unknown, occupation: unknown, entries: unknown};  
 
 
 
