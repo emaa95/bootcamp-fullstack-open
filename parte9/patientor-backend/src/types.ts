@@ -4,7 +4,6 @@ export interface DiagnoseEntry {
     latin?:string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BaseEntry {
   id: string;
   description: string;
@@ -13,12 +12,13 @@ export interface BaseEntry {
   diagnosisCodes?: Array<DiagnoseEntry['code']>;
 }
 
+export type NewBaseEntry = Omit<BaseEntry, 'id'>;
 
 export interface PatientEntry {
     id: string;
     name: string;
     dateOfBirth: string;
-    ssn: string;
+    ssn?: string;
     gender: Gender;
     occupation: string;
     entries: Entry[];
@@ -30,26 +30,30 @@ export enum HealthCheckRating {
     "CriticalRisk" = 3
   }
   
-  interface HealthCheckEntry extends BaseEntry {
+  export interface HealthCheckEntry extends BaseEntry {
     type: "HealthCheck";
     healthCheckRating: HealthCheckRating;
   }
 
-  interface OccupationalHealthCareEntry extends BaseEntry {
+  export interface SickLeave {
+    startDate: string;
+    endDate: string;
+  }
+
+  export interface OccupationalHealthCareEntry extends BaseEntry {
     type: "OccupationalHealthcare";
     employerName: string;
-    sickLeave?: {
-        startDate: string;
-        endDate: string;
-    }
+    sickLeave?: SickLeave
  }
 
- interface HospitalEntry extends BaseEntry {
+ export interface Discharge {
+  date: string;
+  criteria: string;
+  }
+ 
+  export interface HospitalEntry extends BaseEntry {
     type: "Hospital";
-    discharge?: {
-        date: string;
-        criteria: string;
-    } 
+    discharge?: Discharge 
  }
 
   export type Entry =
@@ -66,3 +70,10 @@ export enum Gender {
     Female = 'female',
     Other = 'other'
 }
+
+type UnionOmit<T, K extends string | number | symbol> 
+    = T extends unknown ?
+        Omit<T, K> 
+        : never;
+
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;

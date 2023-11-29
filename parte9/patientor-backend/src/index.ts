@@ -2,9 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import diagnoseRouter from './routes/diagnoses';
 import patientRouter from './routes/patients';
-
+import morgan from 'morgan';
 
 const app = express();
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+app.use(morgan((_: any, req, res) => {
+  return [
+    req.method,
+    req.url,
+    res.statusCode,
+    JSON.stringify(req.body)
+  ].join(' ');
+}));
 
 app.use(express.json());
 const PORT = 3001;
