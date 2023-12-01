@@ -119,16 +119,15 @@ const PatientDetails : React.FC<PatientDetailsProps> = ({patients}) => {
             ))}
           </Grid>
         )}
-
             <AddEntryModal
             onSubmit={submitNewEntry}
             error={error}
             onClose={closeModal}
             modalOpen={modalOpen}
         />
-        <Button variant="contained" onClick={() => openModal()}>
+        <Button variant="contained" onClick={() => openModal()} style={{marginTop:"0.5rem"}}>
          Add New Entry
-       </Button>
+        </Button>
         
             </div>
         );
