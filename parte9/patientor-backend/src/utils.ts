@@ -99,21 +99,38 @@ const parseDiagnosisCodes = (object: unknown): Array<DiagnoseEntry['code']> =>  
     }
     console.log('Returning diagnosisCodes:', object.diagnosisCodes);
     return object.diagnosisCodes as Array<DiagnoseEntry['code']>;
-  };
-
-  const isHealthCheckRating = (param: number): param is HealthCheckRating => {
-    return Object.values(HealthCheckRating).includes(param);
 };
 
+/*
+const isHealthCheckRating = (param: number): param is HealthCheckRating => {
+    return Object.values(HealthCheckRating).includes(param);
+};
+*/
 const isNumber = (text: unknown) : text is number => {
     return typeof text === 'number' || text instanceof Number;
 };
-
+/*
 const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
     if(!healthCheckRating || !isNumber(healthCheckRating) || !isHealthCheckRating(healthCheckRating)){
         throw new Error ('Incorrect or missing healthCheckRating: ' + healthCheckRating);
     }
     return healthCheckRating;
+};
+*/
+const isHealthCheckRating = (param: number): param is HealthCheckRating => {
+    return Object.values(HealthCheckRating).includes(param as HealthCheckRating);
+};
+
+const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
+    if (
+        healthCheckRating === undefined ||
+        !isNumber(healthCheckRating) ||
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        !isHealthCheckRating(healthCheckRating as number)
+    ) {
+        throw new Error('Incorrect or missing healthCheckRating: ' + healthCheckRating);
+    }
+    return healthCheckRating as HealthCheckRating;
 };
 
 const parseSickLeave = (object: unknown): SickLeave => {
