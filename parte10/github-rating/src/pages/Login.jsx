@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Formik, useField } from 'formik';
 import { Button, View, StyleSheet } from 'react-native';
 import StyledTextInput from '../components/StyledTextInput';
 import { loginValidationSchema } from '../validationSchemas/login';
 import Text from '../components/StyledText';
 import useSignIn from '../hooks/useSignIn';
+import { useNavigate } from 'react-router-native';
 
 const initialValues = {
   email: '',
@@ -40,7 +41,8 @@ const FormikInputValue = ({ name, ...props }) => {
 };
 
 export default function LoginPage () {
-  const [signIn] = useSignIn();
+  const [signIn, { data, error }] = useSignIn();
+  const navigate = useNavigate();
 
   const onSubmit = async (values) => {
     const { email, password } = values;
@@ -48,10 +50,27 @@ export default function LoginPage () {
 
     try {
       await signIn({ username: email, password });
+      navigate('/');
+      if (data) {
+        console.log('Ingreso existoso:', data);
+      }
+      if (error) {
+        console.log('Error durante el inicio de sesión:', error);
+      }
     } catch (e) {
       console.log(e);
     }
   };
+  useEffect(() => {
+    if (data) {
+      console.log('Ingreso exitoso:', data);
+    }
+
+    if (error) {
+      console.error('Error durante el inicio de sesión:', error);
+    }
+  }, [data, error]);
+
   return (
     <Formik initialValues={initialValues} validationSchema={loginValidationSchema} onSubmit={onSubmit}>
     {
