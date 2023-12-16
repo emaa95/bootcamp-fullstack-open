@@ -4,6 +4,7 @@ import { Button, View, StyleSheet } from 'react-native';
 import StyledTextInput from '../components/StyledTextInput';
 import { loginValidationSchema } from '../validationSchemas/login';
 import Text from '../components/StyledText';
+import useSignIn from '../hooks/useSignIn';
 
 const initialValues = {
   email: '',
@@ -39,8 +40,20 @@ const FormikInputValue = ({ name, ...props }) => {
 };
 
 export default function LoginPage () {
+  const [signIn] = useSignIn();
+
+  const onSubmit = async (values) => {
+    const { email, password } = values;
+    console.log('press');
+
+    try {
+      await signIn({ username: email, password });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
-    <Formik initialValues={initialValues} validationSchema={loginValidationSchema}>
+    <Formik initialValues={initialValues} validationSchema={loginValidationSchema} onSubmit={onSubmit}>
     {
         ({ handleSubmit }) => {
           return <View style={styles.form}>
