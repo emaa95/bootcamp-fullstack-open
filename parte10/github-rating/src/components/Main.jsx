@@ -5,6 +5,7 @@ import Constants from 'expo-constants';
 import AppBar from './AppBar';
 import { Route, Routes, Switch } from 'react-router-native';
 import LoginPage from '../pages/Login';
+import SignOut from '../pages/SignOut';
 
 const Main = () => {
   return (
@@ -14,6 +15,7 @@ const Main = () => {
           <Routes>
           <Route path='/' element={<RepositoryList />} />
           <Route path='/signin' element={<LoginPage></LoginPage>} />
+          <Route path='/signout' element={<SignOut></SignOut>}></Route>
           </Routes>
         </View>
   );

@@ -4,6 +4,7 @@ import Text from './StyledText';
 import Constants from 'expo-constants';
 import theme from '../theme';
 import { Link, useLocation } from 'react-router-native';
+import useAuthorizedUser from '../hooks/useAuthorized';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,11 +44,16 @@ const AppBarTab = ({ children, to }) => {
 };
 
 const AppBar = () => {
+  const { isAuthorized } = useAuthorizedUser();
   return (
         <View style={styles.container}>
             <ScrollView horizontal style={styles.scroll}>
                 <AppBarTab to='/'>Repositories</AppBarTab>
-                <AppBarTab to='/signin'>Sign In</AppBarTab>
+                {
+                  isAuthorized
+                    ? <AppBarTab to='/signout'>Sign Out</AppBarTab>
+                    : <AppBarTab to='/signin'>Sign In</AppBarTab>
+                }
             </ScrollView>
         </View>
   );
