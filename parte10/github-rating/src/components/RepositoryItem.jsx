@@ -40,7 +40,7 @@ const RepositoryItemHeader = (props) => (
 );
 
 const RepositoryItem = (props) => (
-    <View key = {props.id} style={styles.container}>
+    <View key = {props.id} style={styles.container} testID='repositoryItem'>
       <RepositoryItemHeader {...props}/>
       <RepositoryStats {...props}/>
     </View>

@@ -1,8 +1,14 @@
 module.exports = {
   root: true,
+  plugins: ['react', 'jest'],
   extends: [
-    'standard'
+    'eslint:recommended', 'plugin:react/recommended', 'plugin:jest/recommended'
   ],
+  parser: "@babel/eslint-parser",
+  env: {
+    browser: true,
+    "react-native/react-native": true
+  },
   rules: {
     'react/prop-types': 'off',
     semi: ['error', 'always'],
