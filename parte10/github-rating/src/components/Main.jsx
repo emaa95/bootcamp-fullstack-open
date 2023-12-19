@@ -6,6 +6,7 @@ import AppBar from './AppBar';
 import { Route, Routes, Switch } from 'react-router-native';
 import LoginPage from '../pages/Login';
 import SignOut from '../pages/SignOut';
+import SingleRepositoryView from './SingleRepositoryView';
 
 const Main = () => {
   return (
@@ -16,6 +17,7 @@ const Main = () => {
           <Route path='/' element={<RepositoryList />} />
           <Route path='/signin' element={<LoginPage></LoginPage>} />
           <Route path='/signout' element={<SignOut></SignOut>}></Route>
+          <Route path='/:id' element={<SingleRepositoryView/>}></Route>
           </Routes>
         </View>
   );
