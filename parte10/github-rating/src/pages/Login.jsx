@@ -8,7 +8,7 @@ import useSignIn from '../hooks/useSignIn';
 import { useNavigate } from 'react-router-native';
 
 const initialValues = {
-  email: '',
+  username: '',
   password: ''
 };
 
@@ -45,11 +45,11 @@ export default function LoginPage () {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    const { email, password } = values;
+    const { username, password } = values;
     console.log('press');
 
     try {
-      await signIn({ username: email, password });
+      await signIn({ username, password });
       navigate('/');
       if (data) {
         console.log('Ingreso existoso:', data);
@@ -77,8 +77,8 @@ export default function LoginPage () {
         ({ handleSubmit }) => {
           return <View style={styles.form}>
             <FormikInputValue
-                name='email'
-                placeholder='E-mail'
+                name='username'
+                placeholder='Username'
             />
             <FormikInputValue
                 name='password'

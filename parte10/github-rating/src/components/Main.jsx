@@ -6,6 +6,7 @@ import AppBar from './AppBar';
 import { Route, Routes } from 'react-router-native';
 import LoginPage from '../pages/Login';
 import SignOut from '../pages/SignOut';
+import SignUp from '../pages/SignUp';
 import SingleRepositoryView from './SingleRepositoryView';
 import CreateReview from './CreateReview';
 
@@ -20,6 +21,7 @@ const Main = () => {
           <Route path='/signout' element={<SignOut></SignOut>}></Route>
           <Route path='/:id' element={<SingleRepositoryView/>}></Route>
           <Route path='/createReview' element={<CreateReview></CreateReview>}></Route>
+          <Route path='/signup' element={<SignUp></SignUp>}></Route>
           </Routes>
         </View>
   );
