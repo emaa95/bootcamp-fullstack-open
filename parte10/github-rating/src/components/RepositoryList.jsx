@@ -4,14 +4,23 @@ import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
 import { Link } from 'react-router-native';
 import { Picker } from '@react-native-picker/picker';
+import { Searchbar } from 'react-native-paper';
+import { useDebounce } from "use-debounce";
+
 const styles = StyleSheet.create({ 
     pickerOrder:{
       marginBottom: 10,
       marginTop: Platform.OS === 'ios' ? -50 : 10
+    },
+    search: {
+      marginVertical: 10,
+      borderRadius: 10,
+      marginHorizontal:5,
+      backgroundColor: '#e1e4e8'
     }
 })
 
-export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
+export const RepositoryListContainer = ({ repositories, order, setOrder, searchKeyword, setSearchKeyword }) => {
   
   const repositoryNodes = repositories
     ? repositories.edges.map(edge => edge.node)
@@ -19,6 +28,13 @@ export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
 
   return (
     <View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={(query) => setSearchKeyword(query)}
+        value={searchKeyword}
+        style={styles.search}
+        theme={{ colors: { primary: 'blue' } }}
+      />
       <Picker style={styles.pickerOrder} selectedValue={order} onValueChange={(itemValue) => setOrder(itemValue)}>
         <Picker.Item label='Latest repositories' value='latest'/>
         <Picker.Item label='Highest rated repositories' value='highestRated'/>
@@ -42,7 +58,8 @@ export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
 const RepositoryList = () => {
   
   const [ order, setOrder] = useState('latest');
-
+  const [ searchQuery, setSearchQuery ] = useState('')
+  const [ searchKeyword ] = useDebounce(searchQuery, 50);
 
   let orderBy;
   let orderDirection;
@@ -64,11 +81,12 @@ const RepositoryList = () => {
       break
   }
 
-  const { repositories } = useRepositories(orderBy, orderDirection);
+  const { repositories } = useRepositories(orderBy, orderDirection, searchKeyword);
 
   console.log('t', orderBy, orderDirection, order)
 
-  return <RepositoryListContainer repositories={repositories} order={order} setOrder={setOrder}/>;
+  return <RepositoryListContainer repositories={repositories} order={order} setOrder={setOrder} searchKeyword={searchKeyword}
+  setSearchKeyword={setSearchQuery}/>;
 
 }
 
