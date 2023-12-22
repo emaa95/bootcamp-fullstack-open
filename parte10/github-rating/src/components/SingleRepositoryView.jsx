@@ -52,13 +52,6 @@ const styles = StyleSheet.create({
         marginRight: 30,
         fontFamily: theme.fonts.main
     },
-    /*
-    separator: {
-        height: 1,
-        backgroundColor: theme.colors.gray, // Ajusta el color según tus necesidades
-        marginVertical: 10, // Puedes ajustar este margen según tu diseño
-    },
-    */
 })
 
 const RepositoryInfo = ({ repository }) => {

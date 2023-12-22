@@ -9,6 +9,7 @@ import SignOut from '../pages/SignOut';
 import SignUp from '../pages/SignUp';
 import SingleRepositoryView from './SingleRepositoryView';
 import CreateReview from './CreateReview';
+import MyReviews from './MyReviews';
 
 const Main = () => {
   return (
@@ -22,6 +23,7 @@ const Main = () => {
           <Route path='/:id' element={<SingleRepositoryView/>}></Route>
           <Route path='/createReview' element={<CreateReview></CreateReview>}></Route>
           <Route path='/signup' element={<SignUp></SignUp>}></Route>
+          <Route path='/myReviews' element={<MyReviews></MyReviews>}></Route>
           </Routes>
         </View>
   );
