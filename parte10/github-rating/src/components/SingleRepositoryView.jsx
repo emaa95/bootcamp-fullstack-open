@@ -51,7 +51,14 @@ const styles = StyleSheet.create({
     text: {
         marginRight: 30,
         fontFamily: theme.fonts.main
-    }
+    },
+    /*
+    separator: {
+        height: 1,
+        backgroundColor: theme.colors.gray, // Ajusta el color según tus necesidades
+        marginVertical: 10, // Puedes ajustar este margen según tu diseño
+    },
+    */
 })
 
 const RepositoryInfo = ({ repository }) => {
@@ -97,7 +104,7 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 const SingleRepositoryView = () => {
     const { id } = useParams();
-    const { repository } = useSingleRepository(id);
+    const { repository, fetchMore } = useSingleRepository(id, 4);
 
     console.log('repositoryId', id)
     
@@ -105,14 +112,23 @@ const SingleRepositoryView = () => {
     ? repository.reviews.edges.map(edge => edge.node) 
     : null
 
+    const onEndReach = () => {
+        fetchMore()
+    }
+
     return (
+        
         <FlatList
           data={reviews}
           ItemSeparatorComponent={ItemSeparator}
           renderItem={({ item }) => <ReviewItem review={item} />}
           keyExtractor={({ id }) => id}
-          ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+          ListHeaderComponent={() => <RepositoryInfo repository={repository}
+          />}
+          onEndReached={onEndReach}
+          onEndReachedThreshold={0.5}
         />
+       
       );
     
 }

@@ -24,11 +24,12 @@ export const ME = gql`
 `;
 
 export const SINGLE_REPOSITORY = gql`
-query Repository($id: ID!){
+query Repository($id: ID!, $first: Int, $after: String){
   repository(id: $id) {
     ...RepoDetails
     url
-    reviews {
+    reviews(first: $first, after: $after) {
+      totalCount
       edges {
         node {
           id
@@ -40,8 +41,16 @@ query Repository($id: ID!){
             username
           }
         }
+        cursor
       }
+      pageInfo {
+        endCursor,
+        startCursor,
+        hasNextPage
+      }
+      
     }
+    
   }
 }
 ${REPO_DETAILS}
