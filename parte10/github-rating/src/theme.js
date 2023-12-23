@@ -7,7 +7,8 @@ const theme = {
     navBarBackground: '#24292e',
     mainBackground: '#e1e4e8',
     fontColor: '#FFFFFF',
-    primary: '#0366d6'
+    primary: '#0366d6',
+    error: '#FF0000'
   },
   fontSizes: {
     title: 20,

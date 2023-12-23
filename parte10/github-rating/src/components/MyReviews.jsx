@@ -1,8 +1,11 @@
 import React from 'react'
 import  useMeReview  from '../hooks/useMeReview'
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, Alert, Pressable } from 'react-native';
 import Text from './StyledText';
 import theme from '../theme';
+import useDeleteReview from '../hooks/useDeleteReview';
+import { useNavigate } from 'react-router-native';
+
 
 const styles = StyleSheet.create({ 
     container: {
@@ -16,20 +19,7 @@ const styles = StyleSheet.create({
     infoContainer: {
         flexGrow: 1
     },  
-    gitHubContainer: {
-        marginTop: 10,
-        backgroundColor: theme.colors.primary,
-        borderRadius: 5,
-        minWidth: "85%",
-        alignSelf:"center",
-    },
-    gitHubText:{
-        color: theme.colors.fontColor,
-        alignSelf: "center",
-        padding:15,
-        fontFamily: theme.fonts.main,
-        fontWeight: theme.fontWeights.bold
-    },
+    
     ratingContainer: {
         width: 50,
         height: 50,
@@ -50,9 +40,36 @@ const styles = StyleSheet.create({
         marginRight: 30,
         fontFamily: theme.fonts.main
     },
+    buttonsContainer: {
+        marginTop: 20,
+        paddingLeft: 30,
+        paddingRight: 55
+    },
+    buttons: {
+        flexDirection: 'row',
+        justifyContent:'space-between'
+    },
+    buttonView: {
+        backgroundColor: theme.colors.primary,
+        borderRadius: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10
+    },
+    buttonDelete: {
+        backgroundColor: theme.colors.error,
+        borderRadius: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10
+    },
+    textButton: {
+        color: theme.colors.fontColor
+    }
 })
 
 const MeReviewItem = ({ review, refetch }) => {
+    const [deleteReview] = useDeleteReview()
+    const navigate = useNavigate();
+
     const createdAtDate = new Date(review.createdAt);
     const day = createdAtDate.getDate();
     const month = createdAtDate.getMonth() + 1; 
@@ -60,7 +77,37 @@ const MeReviewItem = ({ review, refetch }) => {
 
     const date = `${day}.${month}.${year}`;
 
+    const handleDelete = () => {
+        Alert.alert(
+            'Delete Review',
+            'Are you sure you want to delete this review?',
+            [ 
+                { 
+                    text: 'Cancel',
+                    onPress: () => Alert.alert('Cancel Pressed')
+                },
+                {
+                    text: 'Delete',
+                    onPress: async() => {
+                        try {
+                            if (!review.id) {
+                                console.error('Invalid review ID');
+                                return;
+                              }
+                            await deleteReview({ deleteReviewId: review.id });
+                            await refetch();
+                        } catch (error) {
+                            console.error('Error deleting review:', error);
+                            Alert.alert('Error', `Error deleting review: ${error.message}`);
+                        }
+                    }
+                }
+            ]
+            )
+    }
+
     return (
+        <>
         <View style={styles.container}>
         <View style={styles.ratingContainer}>
             <Text fontWeight={"bold"} fontSize={"title"} style={styles.rating}>{review.rating}</Text>
@@ -70,7 +117,19 @@ const MeReviewItem = ({ review, refetch }) => {
             <Text fontSize={"body"} color={"textSecondary"} style={styles.date}>{date}</Text>
             <Text style={styles.text}>{review.text}</Text>
         </View>
-    </View>
+        </View>
+        <View style={styles.buttonsContainer}> 
+            <View style={styles.buttons}>
+            <Pressable style={styles.buttonView} onPress={()=> navigate(`/${review.repositoryId}`) }>
+                <Text fontWeight={"bold"} style={styles.textButton}>View repository</Text>
+            </Pressable>
+            <Pressable style={styles.buttonDelete} onPress={handleDelete}>
+                <Text fontWeight={"bold"} style={styles.textButton}>Delete review</Text>
+            </Pressable>
+            </View>
+        </View>
+     
+        </>
     )
 
 }

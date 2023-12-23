@@ -22,9 +22,11 @@ export const ME = gql`
       reviews @include(if: $includeReviews) {
         edges {
           node {
+            id
             createdAt
             rating
             text
+            repositoryId
             repository {
               fullName
             }
